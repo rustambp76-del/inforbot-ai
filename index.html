@@ -897,12 +897,108 @@ micBtn.addEventListener(
   }
 );
 
+/* =====================================================
+   FOTO ROBOT DARI GOOGLE DRIVE
+===================================================== */
+
+let fotoRobot = null;
+
+function ambilFotoRobot() {
+
+  const script = document.createElement("script");
+
+  const callbackName =
+    "fotoRobotCallback_" + Date.now();
+
+  window[callbackName] = function(data) {
+
+    if (data && data.success && data.data) {
+
+      console.log("Foto robot berhasil:", data.nama);
+
+      fotoRobot = data.data;
+
+      pasangFotoKeRobot(fotoRobot);
+    }
+
+    delete window[callbackName];
+
+    if (script.parentNode) {
+      script.parentNode.removeChild(script);
+    }
+  };
+
+  script.onerror = function() {
+
+    console.log("Foto robot gagal diambil.");
+
+    delete window[callbackName];
+
+    if (script.parentNode) {
+      script.parentNode.removeChild(script);
+    }
+  };
+
+  script.src =
+    APPS_SCRIPT_URL +
+    "?action=foto" +
+    "&callback=" +
+    callbackName;
+
+  document.body.appendChild(script);
+}
+
+
+/* =====================================================
+   MENYIAPKAN FOTO WAJAH ROBOT
+===================================================== */
+
+function pasangFotoKeRobot(dataFoto) {
+
+  const textureLoader =
+    new THREE.TextureLoader();
+
+  textureLoader.load(
+    dataFoto,
+
+    function(texture) {
+
+      texture.encoding =
+        THREE.sRGBEncoding;
+
+      console.log(
+        "Foto wajah robot berhasil dimuat."
+      );
+
+      /*
+       * Foto sudah berhasil diterima.
+       * Untuk sementara belum ditempelkan
+       * ke kepala robot.
+       */
+    },
+
+    undefined,
+
+    function(error) {
+
+      console.log(
+        "Gagal memuat foto robot:",
+        error
+      );
+
+    }
+  );
+}
 
 /* =====================================================
    MULAI
 ===================================================== */
 
 initThree();
+
+setTimeout(function() {
+  ambilFotoRobot();
+}, 1000);
 
 
 
