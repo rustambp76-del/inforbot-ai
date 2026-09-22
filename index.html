@@ -904,6 +904,118 @@ micBtn.addEventListener(
 
 initThree();
 
+<script>
+/* =========================================
+   INFORBOT AI V3.3
+   MENGAMBIL FOTO ROBOT DARI GOOGLE DRIVE
+   ========================================= */
+
+let fotoRobot = null;
+
+function ambilFotoRobot() {
+
+  const script = document.createElement("script");
+
+  const callbackName =
+    "fotoRobotCallback_" + Date.now();
+
+  window[callbackName] = function(data) {
+
+    if (data && data.success && data.data) {
+
+      console.log("Foto robot berhasil:", data.nama);
+
+      fotoRobot = data.data;
+
+      pasangFotoKeRobot(fotoRobot);
+    }
+
+    delete window[callbackName];
+
+    if (script.parentNode) {
+      script.parentNode.removeChild(script);
+    }
+  };
+
+  script.onerror = function() {
+
+    console.log("Foto robot gagal diambil.");
+
+    delete window[callbackName];
+
+    if (script.parentNode) {
+      script.parentNode.removeChild(script);
+    }
+  };
+
+  script.src =
+    APPS_SCRIPT_URL +
+    "?action=foto" +
+    "&callback=" +
+    callbackName;
+
+  document.body.appendChild(script);
+}
+
+
+/* =========================================
+   MENYIAPKAN FOTO UNTUK WAJAH ROBOT
+   ========================================= */
+
+function pasangFotoKeRobot(dataFoto) {
+
+  const textureLoader = new THREE.TextureLoader();
+
+  textureLoader.load(
+    dataFoto,
+
+    function(texture) {
+
+      texture.encoding = THREE.sRGBEncoding;
+
+      console.log("================================");
+      console.log("WAJAH ROBOT SIAP");
+      console.log("Foto berhasil dimuat ke Three.js");
+      console.log("================================");
+
+      /*
+       * Untuk sementara foto belum ditempel
+       * ke kepala robot.
+       *
+       * Tahap berikutnya kita akan membuat
+       * wajah futuristik dari foto ini.
+       */
+
+    },
+
+    undefined,
+
+    function(error) {
+
+      console.log(
+        "Gagal memuat texture wajah robot:",
+        error
+      );
+
+    }
+  );
+}
+
+
+/* =========================================
+   JALANKAN SETELAH HALAMAN SELESAI DIMUAT
+   ========================================= */
+
+window.addEventListener("load", function() {
+
+  setTimeout(function() {
+
+    ambilFotoRobot();
+
+  }, 1000);
+
+});
+
 </script>
 
 </body>
