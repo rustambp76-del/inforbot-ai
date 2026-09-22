@@ -966,15 +966,53 @@ function pasangFotoKeRobot(dataFoto) {
       texture.encoding =
         THREE.sRGBEncoding;
 
-      console.log(
-        "Foto wajah robot berhasil dimuat."
+      /* =====================================
+         PANEL WAJAH FOTO
+      ===================================== */
+
+      const fotoGeo =
+        new THREE.PlaneGeometry(1.45, 0.85);
+
+      const fotoMat =
+        new THREE.MeshBasicMaterial({
+          map: texture,
+          transparent: true
+        });
+
+      const fotoWajah =
+        new THREE.Mesh(
+          fotoGeo,
+          fotoMat
+        );
+
+      /*
+       * Posisi depan kepala robot
+       */
+      fotoWajah.position.set(
+        0,
+        3.15,
+        1.49
       );
 
       /*
-       * Foto sudah berhasil diterima.
-       * Untuk sementara belum ditempelkan
-       * ke kepala robot.
+       * Sedikit dikecilkan agar
+       * tetap berada di dalam kepala.
        */
+      fotoWajah.scale.set(
+        0.85,
+        0.85,
+        0.85
+      );
+
+      /*
+       * Robot adalah Group utama
+       */
+      robot.add(fotoWajah);
+
+      console.log(
+        "Foto wajah berhasil dipasang ke robot."
+      );
+
     },
 
     undefined,
@@ -982,7 +1020,7 @@ function pasangFotoKeRobot(dataFoto) {
     function(error) {
 
       console.log(
-        "Gagal memuat foto robot:",
+        "Gagal memasang foto wajah:",
         error
       );
 
