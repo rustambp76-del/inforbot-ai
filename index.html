@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>INFORBOT AI V3.0</title>
+<title>INFORBOT AI V4.0</title>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
@@ -19,7 +19,7 @@ html,body{
   height:100%;
   overflow:hidden;
   font-family:Arial,sans-serif;
-  background:#020711;
+  background:#020914;
   color:white;
 }
 
@@ -27,12 +27,40 @@ html,body{
   position:relative;
   width:100%;
   height:100%;
+  overflow:hidden;
+}
+
+#app::before{
+  content:"";
+  position:absolute;
+  inset:-24px;
+  z-index:0;
+  background:url("INFORBOT_BG.png") center/cover no-repeat;
+  filter:blur(10px) brightness(.55) saturate(1.15);
+  transform:scale(1.05);
+}
+
+#app::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:1;
+  pointer-events:none;
+  background:linear-gradient(180deg,rgba(0,8,24,.28),rgba(0,8,22,.62));
 }
 
 #robotCanvas{
   position:absolute;
   inset:0;
-  z-index:1;
+  z-index:5;
+}
+
+#robotCanvas::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background:linear-gradient(180deg,rgba(0,10,25,.18),rgba(0,8,20,.34));
 }
 
 #judul{
@@ -162,6 +190,37 @@ button:disabled{
   text-shadow:0 0 8px #00aaff;
 }
 
+
+/* =====================================================
+   INFORBOT AI V4 - FUTURISTIC UI
+===================================================== */
+#judul{
+  top:18px; left:32px; transform:none; text-align:left;
+  padding:10px 26px 12px; border:1px solid #13aaff;
+  border-radius:18px; background:rgba(0,18,48,.78);
+  box-shadow:0 0 28px rgba(0,153,255,.42), inset 0 0 20px rgba(0,153,255,.12);
+}
+#judul h1{font-size:34px; letter-spacing:1px;}
+#judul p{font-size:12px; margin-top:2px;}
+#akun{top:22px; right:24px; padding:9px 16px; border:1px solid #18aaff; border-radius:22px; background:rgba(0,18,48,.72); box-shadow:0 0 18px rgba(0,153,255,.35);}
+#copyrightTop{top:auto; left:18px; bottom:18px; padding:8px 22px; border-radius:0 22px 22px 0; background:rgba(0,30,70,.72);}
+#copyrightBottom{display:none;}
+#panel{left:50%; bottom:18px; width:min(1180px,94%); padding:14px 18px; border-radius:24px; display:grid; grid-template-columns:150px 1fr 330px; gap:14px; align-items:center; background:rgba(0,20,55,.84); border:1px solid #16aaff; box-shadow:0 0 30px rgba(0,153,255,.42), inset 0 0 22px rgba(0,153,255,.1);}
+#status{grid-column:1/-1; margin:0; font-size:12px; letter-spacing:1px;}
+#pertanyaan{margin:0; padding:13px 16px; min-height:48px; border:1px solid rgba(35,164,255,.55); border-radius:12px; background:rgba(4,45,95,.65);}
+#jawaban{margin:0; min-height:48px; padding:13px 16px; border:1px solid rgba(35,164,255,.45); border-radius:12px; background:rgba(4,35,75,.55);}
+#tombol{grid-column:1; grid-row:3; margin:0; display:flex; flex-direction:column; gap:8px;}
+#tombol button{width:100%; padding:12px 10px;}
+#panel #pertanyaan{grid-column:2; grid-row:3;}
+#panel #jawaban{grid-column:3; grid-row:3;}
+#panel #tombol{grid-column:1; grid-row:3;}
+#menuKiri,#fiturKanan{position:absolute; z-index:25; display:flex; flex-direction:column; gap:7px; padding:12px; border:1px solid #159dff; border-radius:18px; background:rgba(0,17,48,.72); box-shadow:0 0 24px rgba(0,153,255,.3); backdrop-filter:blur(7px);}
+#menuKiri{left:22px; top:170px; width:220px;}
+#fiturKanan{right:22px; top:220px; width:205px;}
+.uiItem{padding:11px 13px; border:1px solid rgba(28,157,255,.65); border-radius:12px; background:rgba(0,65,130,.42); color:#e9fbff; font-weight:bold; font-size:13px; text-align:left; cursor:pointer; box-shadow:inset 0 0 12px rgba(0,153,255,.08);}
+.uiItem:hover{background:rgba(0,108,190,.58); transform:translateX(2px);}
+@media(max-width:900px){#menuKiri{left:10px;top:145px;width:175px;}#fiturKanan{right:10px;top:145px;width:160px;}#menuKiri .uiItem,#fiturKanan .uiItem{font-size:11px;padding:9px;}#judul{left:50%;transform:translateX(-50%);width:max-content;max-width:72%;}#judul h1{font-size:25px;}#panel{grid-template-columns:1fr;bottom:8px;}#panel #tombol,#panel #pertanyaan,#panel #jawaban{grid-column:1;grid-row:auto;}#copyrightTop{display:none;}}
+
 @media(max-width:600px){
   #judul h1{
     font-size:23px;
@@ -189,49 +248,42 @@ button:disabled{
 
   <div id="robotCanvas"></div>
 
-  <div id="copyrightTop">
-    © Rustam, SE
-  </div>
+  <div id="copyrightTop">© Rustam, SE</div>
 
-  <div id="akun">
-    Guru_Hebat
-  </div>
+  <div id="akun">👤 Guru_Hebat</div>
 
   <div id="judul">
     <h1>🤖 INFORBOT AI</h1>
-    <p>Asisten Cerdas Informatika • AI • Teknologi</p>
+    <p>Asisten Virtual Informatika • AI • Teknologi</p>
+  </div>
+
+  <div id="menuKiri">
+    <div class="uiItem">🏠 Beranda</div>
+    <div class="uiItem">💻 Informatika</div>
+    <div class="uiItem">🧠 AI</div>
+    <div class="uiItem">&lt;/&gt; Pemrograman</div>
+    <div class="uiItem">🌐 Jaringan &amp; Internet</div>
+    <div class="uiItem">🛡️ Keamanan Digital</div>
+    <div class="uiItem">⚙️ Teknologi Terbaru</div>
+    <div class="uiItem">🎓 Kelas VII - IX</div>
+    <div class="uiItem">👨‍🏫 Mode Guru</div>
+    <div class="uiItem">👥 Mode Siswa</div>
+  </div>
+
+  <div id="fiturKanan">
+    <div class="uiItem">🎤 Bicara<br><small>(Mulai / Berhenti)</small></div>
+    <div class="uiItem">🔊 Jawab<br><small>(Suara Robot)</small></div>
+    <div class="uiItem">〰️ AI<br><small>(Pemrosesan Pertanyaan)</small></div>
   </div>
 
   <div id="panel">
-
-    <div id="status">
-      SIAP MEMBANTU
-    </div>
-
-    <div id="pertanyaan">
-      Pertanyaan: -
-    </div>
-
-    <div id="jawaban">
-      Halo! Saya INFORBOT AI. Silakan tekan tombol mikrofon dan ajukan pertanyaan.
-    </div>
-
+    <div id="status">SIAP MEMBANTU</div>
     <div id="tombol">
-
-      <button id="helloBtn">
-        👋 Sapa Robot
-      </button>
-
-      <button id="micBtn">
-        🎤 Mulai Bicara
-      </button>
-
+      <button id="helloBtn">👋 Sapa Robot</button>
+      <button id="micBtn">🎤 Mulai Bicara</button>
     </div>
-
-  </div>
-
-  <div id="copyrightBottom">
-    HAK CIPTA RUSTAM, S.E.
+    <div id="pertanyaan">Pertanyaan: -</div>
+    <div id="jawaban">Halo! Saya INFORBOT AI. Silakan ajukan pertanyaan tentang Informatika, AI, dan teknologi.</div>
   </div>
 
 </div>
@@ -265,6 +317,7 @@ let scene;
 let camera;
 let renderer;
 let robot;
+let headGroup;
 
 let mataKiri;
 let mataKanan;
@@ -286,8 +339,8 @@ function initThree(){
     100
   );
 
-  camera.position.set(0,1.8,9);
-  camera.lookAt(0,1.5,0);
+  camera.position.set(0,1.9,9.4);
+  camera.lookAt(0,1.55,0);
 
   renderer = new THREE.WebGLRenderer({
     antialias:true
@@ -332,7 +385,7 @@ function initThree(){
 
   robot = new THREE.Group();
 
-  robot.position.y = -1.2;
+  robot.position.y = -1.05;
 
   scene.add(robot);
 
@@ -384,7 +437,7 @@ function initThree(){
 
   /* HEAD */
 
-  const headGroup = new THREE.Group();
+  headGroup = new THREE.Group();
 
   headGroup.position.y = 3.15;
 
@@ -392,7 +445,7 @@ function initThree(){
 
 
   const headGeo =
-    new THREE.BoxGeometry(2.0,1.55,1.45);
+    new THREE.BoxGeometry(2.05,1.6,1.48);
 
   const head =
     new THREE.Mesh(headGeo,bodyMat);
@@ -954,78 +1007,61 @@ function ambilFotoRobot() {
 ===================================================== */
 
 function pasangFotoKeRobot(dataFoto) {
+
   console.log("DATA FOTO DITERIMA:", dataFoto ? "YA" : "TIDAK");
-  const textureLoader =
-    new THREE.TextureLoader();
 
-  textureLoader.load(
-    dataFoto,
+  const img = new Image();
+  img.onload = function() {
 
-    function(texture) {
+    /* Crop kepala dari foto: bagian tengah atas.
+       Nilai crop dapat disesuaikan nanti tanpa mengubah API. */
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
 
-      texture.encoding =
-        THREE.sRGBEncoding;
+    const cropW = img.width * 0.55;
+    const cropH = img.height * 0.62;
+    const cropX = (img.width - cropW) / 2;
+    const cropY = img.height * 0.02;
 
-      /* =====================================
-         PANEL WAJAH FOTO
-      ===================================== */
+    canvas.width = 720;
+    canvas.height = 820;
 
-      const fotoGeo =
-        new THREE.PlaneGeometry(1.45, 0.85);
+    ctx.drawImage(
+      img, cropX, cropY, cropW, cropH,
+      0, 0, canvas.width, canvas.height
+    );
 
-      const fotoMat =
-        new THREE.MeshBasicMaterial({
-          map: texture,
-          transparent: true
-        });
+    const texture = new THREE.CanvasTexture(canvas);
+    texture.encoding = THREE.sRGBEncoding;
+    texture.needsUpdate = true;
 
-      const fotoWajah =
-        new THREE.Mesh(
-          fotoGeo,
-          fotoMat
-        );
-
-      /*
-       * Posisi depan kepala robot
-       */
-      fotoWajah.position.set(
-        0,
-        3.15,
-        1.49
-      );
-
-      /*
-       * Sedikit dikecilkan agar
-       * tetap berada di dalam kepala.
-       */
-      fotoWajah.scale.set(
-        0.85,
-        0.85,
-        0.85
-      );
-
-      /*
-       * Robot adalah Group utama
-       */
-      robot.add(fotoWajah);
-
-      console.log(
-        "Foto wajah berhasil dipasang ke robot."
-      );
-
-    },
-
-    undefined,
-
-    function(error) {
-
-      console.log(
-        "Gagal memasang foto wajah:",
-        error
-      );
-
+    const old = headGroup.getObjectByName("fotoWajah");
+    if(old){
+      headGroup.remove(old);
+      if(old.material) old.material.dispose();
     }
-  );
+
+    const fotoGeo = new THREE.PlaneGeometry(1.32, 1.50);
+    const fotoMat = new THREE.MeshBasicMaterial({
+      map: texture,
+      transparent: true
+    });
+
+    const fotoWajah = new THREE.Mesh(fotoGeo, fotoMat);
+    fotoWajah.name = "fotoWajah";
+    fotoWajah.position.set(0, 0, 0.79);
+
+    /* Sedikit rounded-look lewat frame kepala; foto berada di dalam helm. */
+    headGroup.add(fotoWajah);
+
+    console.log("Foto kepala berhasil dipasang ke kepala robot.");
+  };
+
+  img.onerror = function(error) {
+    console.log("Gagal memuat foto kepala:", error);
+  };
+
+  img.src = dataFoto;
 }
 
 /* =====================================================
