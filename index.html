@@ -2,228 +2,186 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 
 <title>INFORBOT AI</title>
 
 <style>
-* {
-  box-sizing: border-box;
+*{
+  box-sizing:border-box;
 }
 
-html, body {
-  margin: 0;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  font-family: Arial, sans-serif;
-  background: #020817;
-  color: white;
+html,body{
+  margin:0;
+  width:100%;
+  height:100%;
+  overflow:hidden;
+  font-family:Arial,sans-serif;
+  background:#020817;
+  color:white;
 }
 
-#app {
-  width: 100%;
-  height: 100%;
-  position: relative;
+#app{
+  width:100%;
+  height:100%;
+  position:relative;
   background:
-    radial-gradient(circle at center, #06335c 0%, #020817 65%);
+    radial-gradient(circle at center,#063b68 0%,#020817 70%);
 }
 
-canvas {
-  display: block;
+#title{
+  position:absolute;
+  top:18px;
+  left:22px;
+  z-index:20;
 }
 
-#title {
-  position: absolute;
-  top: 20px;
-  left: 25px;
-  z-index: 20;
+#title h1{
+  margin:0;
+  color:#66ddff;
+  font-size:27px;
+  text-shadow:0 0 15px #00aaff;
 }
 
-#title h1 {
-  margin: 0;
-  font-size: 28px;
-  color: #66ddff;
-  text-shadow: 0 0 15px #00aaff;
+#title p{
+  margin:4px 0;
+  font-size:13px;
+  color:#b9eaff;
 }
 
-#title p {
-  margin: 5px 0;
-  color: #b9eaff;
-  font-size: 14px;
+#footer{
+  position:absolute;
+  top:18px;
+  right:20px;
+  z-index:30;
+
+  padding:8px 14px;
+
+  border:1px solid #00aaff;
+  border-radius:20px;
+
+  background:rgba(0,30,65,.8);
+
+  color:#8bdfff;
+
+  font-size:13px;
+  font-weight:bold;
+
+  box-shadow:0 0 15px rgba(0,170,255,.5);
 }
 
-#footer {
-  position: absolute;
-  top: 18px;
-  right: 25px;
-  z-index: 30;
+#panel{
+  position:absolute;
+  right:25px;
+  bottom:25px;
 
-  color: #8bdfff;
-  font-size: 13px;
-  font-weight: bold;
+  width:340px;
 
-  padding: 8px 14px;
+  padding:18px;
 
-  border: 1px solid rgba(0,170,255,0.6);
-  border-radius: 20px;
+  z-index:20;
 
-  background: rgba(0,35,75,0.65);
+  border:1px solid #009fff;
+  border-radius:18px;
 
-  box-shadow:
-    0 0 12px rgba(0,170,255,0.35);
+  background:rgba(2,18,38,.9);
 
-  text-shadow:
-    0 0 8px #00aaff;
+  box-shadow:0 0 25px rgba(0,150,255,.35);
 }
 
-#panel {
-  position: absolute;
-  right: 30px;
-  bottom: 30px;
-
-  width: 340px;
-
-  padding: 20px;
-
-  z-index: 20;
-
-  background: rgba(2,20,40,0.88);
-
-  border: 1px solid rgba(0,180,255,0.5);
-
-  border-radius: 20px;
-
-  box-shadow:
-    0 0 25px rgba(0,150,255,0.25);
+#status{
+  color:#66ddff;
+  font-weight:bold;
+  margin-bottom:12px;
 }
 
-#status {
-  color: #66ddff;
-  font-weight: bold;
-  margin-bottom: 12px;
+#question,
+#answer{
+  min-height:45px;
+  font-size:14px;
+  line-height:1.5;
+  margin-bottom:10px;
 }
 
-#question {
-  min-height: 55px;
-  color: #ffffff;
-  font-size: 15px;
-  line-height: 1.5;
-  margin-bottom: 12px;
+#answer{
+  color:#9de7ff;
 }
 
-#answer {
-  min-height: 55px;
-  color: #a9e8ff;
-  font-size: 14px;
-  line-height: 1.5;
-  margin-bottom: 18px;
-}
+button{
+  width:100%;
+  border:0;
+  border-radius:30px;
 
-button {
-  width: 100%;
-  padding: 13px;
+  padding:13px;
 
-  border: none;
-  border-radius: 30px;
+  margin-top:8px;
 
-  background: linear-gradient(
+  background:linear-gradient(
     90deg,
     #0077ff,
     #00cfff
   );
 
-  color: white;
+  color:white;
 
-  font-size: 15px;
-  font-weight: bold;
+  font-size:14px;
+  font-weight:bold;
 
-  cursor: pointer;
-
-  box-shadow:
-    0 0 15px rgba(0,180,255,0.4);
-
-  margin-top: 8px;
+  cursor:pointer;
 }
 
-button:hover {
-  transform: scale(1.02);
+button:hover{
+  transform:scale(1.02);
 }
 
-button:active {
-  transform: scale(0.98);
+button:active{
+  transform:scale(.98);
 }
 
-#micButton.listening {
-  background: linear-gradient(
+#micButton.listening{
+  background:linear-gradient(
     90deg,
     #ff1744,
     #ff5252
   );
-
-  box-shadow:
-    0 0 25px rgba(255,40,70,0.7);
 }
 
-#robotLabel {
-  position: absolute;
+#robotName{
+  position:absolute;
+  left:50%;
+  bottom:30px;
 
-  left: 50%;
-  bottom: 40px;
+  transform:translateX(-50%);
 
-  transform: translateX(-50%);
+  color:#66ddff;
 
-  z-index: 10;
+  font-weight:bold;
 
-  color: #66ddff;
-
-  font-size: 18px;
-  font-weight: bold;
-
-  text-shadow:
-    0 0 12px #00aaff;
+  text-shadow:0 0 12px #00aaff;
 }
 
-@media (max-width: 700px) {
+@media(max-width:700px){
 
-  #title h1 {
-    font-size: 21px;
+  #panel{
+    left:12px;
+    right:12px;
+    bottom:12px;
+    width:auto;
   }
 
-  #title p {
-    font-size: 11px;
+  #footer{
+    top:65px;
+    right:12px;
   }
 
-  #footer {
-    top: 75px;
-    right: 15px;
-    font-size: 11px;
-  }
-
-  #panel {
-    left: 15px;
-    right: 15px;
-    bottom: 15px;
-    width: auto;
-  }
-
-  #robotLabel {
-    display: none;
+  #robotName{
+    display:none;
   }
 }
 </style>
 
-<!-- THREE.JS -->
-<script type="importmap">
-{
-  "imports": {
-    "three":
-      "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js",
-    "three/addons/":
-      "https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/"
-  }
-}
-</script>
+<!-- THREE.JS VERSI STABIL -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
 </head>
 
@@ -240,7 +198,7 @@ button:active {
     © Rustam, SE
   </div>
 
-  <div id="robotLabel">
+  <div id="robotName">
     INFORBOT
   </div>
 
@@ -255,9 +213,7 @@ button:active {
     </div>
 
     <div id="answer">
-      Halo! Saya INFORBOT AI.
-      Saya siap membantu belajar Informatika,
-      AI, dan teknologi.
+      Halo! Saya INFORBOT AI. Saya siap membantu belajar Informatika, AI, dan teknologi.
     </div>
 
     <button id="micButton">
@@ -273,49 +229,43 @@ button:active {
 </div>
 
 
-<script type="module">
-
-import * as THREE from "three";
-
+<script>
 
 /* =====================================================
-   THREE.JS
+   THREE.JS ROBOT
 ===================================================== */
 
-const scene = new THREE.Scene();
+var scene =
+  new THREE.Scene();
 
-scene.background = new THREE.Color(0x020817);
+var camera =
+  new THREE.PerspectiveCamera(
+    45,
+    window.innerWidth/window.innerHeight,
+    0.1,
+    100
+  );
 
-
-/* CAMERA */
-
-const camera = new THREE.PerspectiveCamera(
-  45,
-  window.innerWidth / window.innerHeight,
-  0.1,
-  100
+camera.position.set(
+  0,
+  1.8,
+  7
 );
 
-camera.position.set(0, 2.2, 7);
 
-
-/* RENDERER */
-
-const renderer = new THREE.WebGLRenderer({
-  antialias: true
-});
-
-renderer.setPixelRatio(
-  Math.min(window.devicePixelRatio, 2)
-);
+var renderer =
+  new THREE.WebGLRenderer({
+    antialias:true
+  });
 
 renderer.setSize(
   window.innerWidth,
   window.innerHeight
 );
 
-renderer.outputColorSpace =
-  THREE.SRGBColorSpace;
+renderer.setPixelRatio(
+  Math.min(window.devicePixelRatio,2)
+);
 
 document
   .getElementById("app")
@@ -324,128 +274,666 @@ document
 
 /* LIGHT */
 
-const ambientLight =
+var ambient =
   new THREE.AmbientLight(
     0x88bbff,
-    2
+    1.8
   );
 
-scene.add(ambientLight);
+scene.add(ambient);
 
 
-const mainLight =
+var light =
   new THREE.PointLight(
     0x00aaff,
-    80,
+    3,
     20
   );
 
-mainLight.position.set(
+light.position.set(
   2,
   5,
   5
 );
 
-scene.add(mainLight);
+scene.add(light);
 
 
-const light2 =
-  new THREE.PointLight(
-    0x4466ff,
-    60,
-    15
-  );
+/* ROBOT */
 
-light2.position.set(
-  -4,
-  2,
-  2
-);
+var robot =
+  new THREE.Group();
 
-scene.add(light2);
-
-
-/* =====================================================
-   ROBOT
-===================================================== */
-
-const robot = new THREE.Group();
+robot.position.y=-1.2;
 
 scene.add(robot);
-
-robot.position.y = -1.2;
 
 
 /* MATERIAL */
 
-const whiteMaterial =
+var white =
   new THREE.MeshStandardMaterial({
-    color: 0xdceeff,
-    metalness: 0.65,
-    roughness: 0.28
+    color:0xdceeff,
+    metalness:.65,
+    roughness:.25
+  });
+
+var dark =
+  new THREE.MeshStandardMaterial({
+    color:0x071321,
+    metalness:.8,
+    roughness:.2
+  });
+
+var blue =
+  new THREE.MeshStandardMaterial({
+    color:0x00cfff,
+    emissive:0x0077aa,
+    emissiveIntensity:3
   });
 
 
-const darkMaterial =
-  new THREE.MeshStandardMaterial({
-    color: 0x071321,
-    metalness: 0.8,
-    roughness: 0.2
-  });
+/* BODY */
 
-
-const blueMaterial =
-  new THREE.MeshStandardMaterial({
-    color: 0x00bfff,
-    emissive: 0x0066aa,
-    emissiveIntensity: 3
-  });
-
-
-/* =====================================================
-   BODY
-===================================================== */
-
-const bodyGeometry =
-  new THREE.BoxGeometry(
-    2.3,
-    2.4,
-    1.25
-  );
-
-const body =
+var body =
   new THREE.Mesh(
-    bodyGeometry,
-    whiteMaterial
+    new THREE.BoxGeometry(
+      2.2,
+      2.2,
+      1.25
+    ),
+    white
   );
 
-body.position.y = 1.2;
+body.position.y=1.2;
 
 robot.add(body);
 
 
-/* CHEST */
+/* HEAD */
 
-const chestGeometry =
-  new THREE.BoxGeometry(
-    0.9,
-    0.7,
-    0.08
-  );
+var head =
+  new THREE.Group();
 
-const chest =
+head.position.y=3;
+
+robot.add(head);
+
+
+var headBox =
   new THREE.Mesh(
-    chestGeometry,
-    darkMaterial
+    new THREE.BoxGeometry(
+      2.3,
+      1.7,
+      1.5
+    ),
+    white
   );
 
-chest.position.set(
+head.add(headBox);
+
+
+/* FACE */
+
+var face =
+  new THREE.Mesh(
+    new THREE.BoxGeometry(
+      1.85,
+      .85,
+      .12
+    ),
+    dark
+  );
+
+face.position.set(
   0,
-  1.35,
-  0.67
+  -.05,
+  .78
 );
 
-robot.add(chest);
+head.add(face);
 
 
-/* CHE
+/* EYES */
+
+var eyeGeometry =
+  new THREE.SphereGeometry(
+    .16,
+    20,
+    20
+  );
+
+var leftEye =
+  new THREE.Mesh(
+    eyeGeometry,
+    blue
+  );
+
+leftEye.position.set(
+  -.42,
+  .05,
+  .88
+);
+
+head.add(leftEye);
+
+
+var rightEye =
+  new THREE.Mesh(
+    eyeGeometry,
+    blue
+  );
+
+rightEye.position.set(
+  .42,
+  .05,
+  .88
+);
+
+head.add(rightEye);
+
+
+/* MOUTH */
+
+var mouth =
+  new THREE.Mesh(
+    new THREE.BoxGeometry(
+      .7,
+      .12,
+      .08
+    ),
+    blue
+  );
+
+mouth.position.set(
+  0,
+  -.37,
+  .86
+);
+
+head.add(mouth);
+
+
+/* CHEST LIGHT */
+
+var chestLight =
+  new THREE.Mesh(
+    new THREE.SphereGeometry(
+      .16,
+      20,
+      20
+    ),
+    blue
+  );
+
+chestLight.position.set(
+  0,
+  1.3,
+  .67
+);
+
+robot.add(chestLight);
+
+
+/* ARMS */
+
+function makeArm(x){
+
+  var arm =
+    new THREE.Group();
+
+  arm.position.set(
+    x,
+    1.3,
+    0
+  );
+
+  var upper =
+    new THREE.Mesh(
+      new THREE.BoxGeometry(
+        .5,
+        1.7,
+        .6
+      ),
+      white
+    );
+
+  upper.position.y=-.2;
+
+  arm.add(upper);
+
+
+  var hand =
+    new THREE.Mesh(
+      new THREE.SphereGeometry(
+        .35,
+        20,
+        20
+      ),
+      white
+    );
+
+  hand.position.y=-1.15;
+
+  arm.add(hand);
+
+  robot.add(arm);
+
+  return arm;
+}
+
+var leftArm =
+  makeArm(-1.45);
+
+var rightArm =
+  makeArm(1.45);
+
+
+/* =====================================================
+   SUARA
+===================================================== */
+
+var status =
+  document.getElementById("status");
+
+var question =
+  document.getElementById("question");
+
+var answer =
+  document.getElementById("answer");
+
+var micButton =
+  document.getElementById("micButton");
+
+var helloButton =
+  document.getElementById("helloButton");
+
+
+var isSpeaking=false;
+
+
+/* =====================================================
+   TEXT TO SPEECH
+===================================================== */
+
+function bicara(teks){
+
+  if(!window.speechSynthesis){
+
+    alert(
+      "Browser tidak mendukung suara."
+    );
+
+    return;
+  }
+
+  window.speechSynthesis.cancel();
+
+  var suara =
+    new SpeechSynthesisUtterance(teks);
+
+  suara.lang="id-ID";
+
+  suara.rate=.95;
+
+  suara.pitch=1;
+
+  suara.onstart=function(){
+
+    isSpeaking=true;
+
+    status.innerText=
+      "🗣️ INFORBOT BERBICARA";
+
+  };
+
+  suara.onend=function(){
+
+    isSpeaking=false;
+
+    status.innerText=
+      "🟢 SIAP";
+
+  };
+
+  window.speechSynthesis.speak(
+    suara
+  );
+}
+
+
+/* =====================================================
+   SAPAAN
+===================================================== */
+
+helloButton.onclick=function(){
+
+  var teks =
+    "Halo! Saya INFORBOT AI. Saya siap membantu kamu belajar Informatika, kecerdasan buatan, dan perkembangan teknologi.";
+
+  question.innerText=
+    "👋 INFORBOT menyapa";
+
+  answer.innerText=
+    teks;
+
+  bicara(teks);
+
+};
+
+
+/* =====================================================
+   SPEECH RECOGNITION
+===================================================== */
+
+var Recognition =
+  window.SpeechRecognition ||
+  window.webkitSpeechRecognition;
+
+var recognition=null;
+
+if(Recognition){
+
+  recognition =
+    new Recognition();
+
+  recognition.lang=
+    "id-ID";
+
+  recognition.continuous=false;
+
+  recognition.interimResults=false;
+
+  recognition.maxAlternatives=1;
+
+
+  recognition.onstart=function(){
+
+    status.innerText=
+      "🔴 MENDENGARKAN...";
+
+    micButton.innerText=
+      "🛑 BERHENTI";
+
+    micButton.classList.add(
+      "listening"
+    );
+
+  };
+
+
+  recognition.onresult=function(event){
+
+    var teks =
+      event.results[0][0].transcript;
+
+    question.innerText=
+      "🗣️ "+teks;
+
+    status.innerText=
+      "🧠 MEMPROSES...";
+
+    var jawaban=
+      jawab(teks);
+
+    answer.innerText=
+      jawaban;
+
+    bicara(jawaban);
+
+  };
+
+
+  recognition.onerror=function(event){
+
+    console.log(
+      "MIC ERROR:",
+      event.error
+    );
+
+    micButton.classList.remove(
+      "listening"
+    );
+
+    micButton.innerText=
+      "🎤 MULAI BICARA";
+
+
+    if(event.error==="not-allowed"){
+
+      status.innerText=
+        "⚠️ AKSES MIKROFON DITOLAK";
+
+      answer.innerText=
+        "Klik ikon gembok di sebelah alamat website lalu izinkan Mikrofon.";
+
+    }
+
+    else if(
+      event.error==="no-speech"
+    ){
+
+      status.innerText=
+        "🟡 TIDAK ADA SUARA";
+
+      answer.innerText=
+        "Saya belum mendengar suara. Silakan coba lagi.";
+
+    }
+
+    else{
+
+      status.innerText=
+        "⚠️ ERROR MIKROFON";
+
+      answer.innerText=
+        "Kesalahan mikrofon: "+
+        event.error;
+
+    }
+
+  };
+
+
+  recognition.onend=function(){
+
+    micButton.classList.remove(
+      "listening"
+    );
+
+    micButton.innerText=
+      "🎤 MULAI BICARA";
+
+    if(!isSpeaking){
+
+      status.innerText=
+        "🟢 SIAP";
+
+    }
+
+  };
+
+
+  micButton.onclick=function(){
+
+    try{
+
+      if(
+        micButton.classList.contains(
+          "listening"
+        )
+      ){
+
+        recognition.stop();
+
+      }else{
+
+        recognition.start();
+
+      }
+
+    }catch(error){
+
+      console.log(error);
+
+    }
+
+  };
+
+}else{
+
+  status.innerText=
+    "⚠️ FITUR SUARA TIDAK TERSEDIA";
+
+  answer.innerText=
+    "Gunakan Google Chrome untuk fitur suara.";
+
+  micButton.disabled=true;
+
+}
+
+
+/* =====================================================
+   JAWABAN SEMENTARA
+===================================================== */
+
+function jawab(teks){
+
+  var p=
+    teks.toLowerCase();
+
+
+  if(
+    p.indexOf("informatika")>=0
+  ){
+
+    return "Informatika adalah ilmu yang mempelajari pengolahan informasi menggunakan komputer dan teknologi.";
+
+  }
+
+
+  if(
+    p.indexOf("ai")>=0 ||
+    p.indexOf("kecerdasan buatan")>=0
+  ){
+
+    return "AI atau kecerdasan buatan adalah teknologi yang memungkinkan komputer melakukan tugas yang biasanya membutuhkan kemampuan manusia.";
+
+  }
+
+
+  if(
+    p.indexOf("komputer")>=0
+  ){
+
+    return "Komputer adalah perangkat elektronik yang menerima data, memproses data, menyimpan data, dan menghasilkan informasi.";
+
+  }
+
+
+  if(
+    p.indexOf("internet")>=0
+  ){
+
+    return "Internet adalah jaringan global yang menghubungkan berbagai perangkat untuk bertukar informasi.";
+
+  }
+
+
+  return "Saya mendengar pertanyaan kamu. Pada tahap berikutnya saya akan terhubung dengan mesin AI sehingga dapat memberikan jawaban yang lebih cerdas.";
+
+}
+
+
+/* =====================================================
+   ANIMASI
+===================================================== */
+
+var waktu=0;
+
+function animasi(){
+
+  requestAnimationFrame(
+    animasi
+  );
+
+  waktu+=.01;
+
+
+  robot.position.y=
+    -1.2+
+    Math.sin(waktu*2)*.04;
+
+
+  head.rotation.y=
+    Math.sin(waktu*.7)*.08;
+
+
+  head.rotation.z=
+    Math.sin(waktu*.5)*.025;
+
+
+  leftArm.rotation.z=
+    -.04+
+    Math.sin(waktu)*.02;
+
+
+  rightArm.rotation.z=
+    .04+
+    Math.sin(waktu)*.02;
+
+
+  chestLight.scale.setScalar(
+    1+
+    Math.sin(waktu*4)*.15
+  );
+
+
+  if(isSpeaking){
+
+    mouth.scale.y=
+      1+
+      Math.abs(
+        Math.sin(waktu*18)
+      )*3;
+
+  }else{
+
+    mouth.scale.y=1;
+
+  }
+
+
+  renderer.render(
+    scene,
+    camera
+  );
+
+}
+
+animasi();
+
+
+/* =====================================================
+   RESIZE
+===================================================== */
+
+window.onresize=function(){
+
+  camera.aspect=
+    window.innerWidth/
+    window.innerHeight;
+
+  camera.updateProjectionMatrix();
+
+  renderer.setSize(
+    window.innerWidth,
+    window.innerHeight
+  );
+
+};
+
+</script>
+
+</body>
+</html>
