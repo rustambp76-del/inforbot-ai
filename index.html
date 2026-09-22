@@ -778,24 +778,44 @@ if(Recognition){
 
   recognition.onresult=function(event){
 
-    var teks =
-      event.results[0][0].transcript;
+  var teks =
+    event.results[0][0].transcript;
 
-    question.innerText=
-      "🗣️ "+teks;
+  question.innerText =
+    "🗣️ " + teks;
 
-    status.innerText=
-      "🧠 MEMPROSES...";
+  status.innerText =
+    "🧠 MEMPROSES...";
 
-    var jawaban=
-      jawab(teks);
+  answer.innerText =
+    "INFORBOT sedang berpikir...";
 
-    answer.innerText=
-      jawaban;
 
-    bicara(jawaban);
+  jawab(teks).then(function(jawaban){
 
-  };
+  answer.innerText =
+    jawaban;
+
+  bicara(jawaban);
+
+});
+
+  }).catch(function(error){
+
+    console.error(
+      "ERROR JAWABAN:",
+      error
+    );
+
+    answer.innerText =
+      "Maaf, terjadi kesalahan saat mengambil jawaban.";
+
+    status.innerText =
+      "⚠️ TERJADI KESALAHAN";
+
+  });
+
+};
 
 
   recognition.onerror=function(event){
