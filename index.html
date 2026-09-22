@@ -160,28 +160,63 @@ button:active{
   text-shadow:0 0 12px #00aaff;
 }
 
-@media(max-width:700px){
+@media (max-width: 700px) {
 
-  #panel{
-    left:12px;
-    right:12px;
-    bottom:12px;
-    width:auto;
+  #title h1 {
+    font-size: 21px;
   }
 
-  #footer{
-    top:65px;
-    right:12px;
+  #title p {
+    font-size: 11px;
   }
 
-  #robotName{
-    display:none;
+  #footer {
+    top: 75px;
+    right: 15px;
+    font-size: 11px;
+  }
+
+  #panel {
+    left: 15px;
+    right: 15px;
+    bottom: 15px;
+    width: auto;
+  }
+
+  #robotLabel {
+    display: none;
   }
 }
+  #copyrightBottom{
+  position:absolute;
+  left:50%;
+  bottom:8px;
+  transform:translateX(-50%);
+  z-index:20;
+
+  color:#66ddff;
+  font-size:12px;
+  font-weight:bold;
+  letter-spacing:1px;
+
+  text-shadow:
+    0 0 8px #00aaff;
+}
+  
 </style>
+
+
 
 <!-- THREE.JS VERSI STABIL -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+<script>
+
+const APPS_SCRIPT_URL =
+"https://script.google.com/macros/s/AKfycbx-fdVRR04PL4rHHmYQZaQ1f-cMLFQV3IuB0sPFkhQojVqFkog_2bBlkavcw_FamS5q/exec";
+
+</script>
+  
 
 </head>
 
@@ -198,8 +233,8 @@ button:active{
     © Rustam, SE
   </div>
 
-  <div id="robotName">
-    INFORBOT
+  <div id="copyrightBottom">
+  HAK CIPTA RUSTAM, S.E.
   </div>
 
   <div id="panel">
@@ -620,7 +655,80 @@ helloButton.onclick=function(){
   bicara(teks);
 
 };
+/* =====================================================
+   HUBUNGKAN KE OTAK INFORBOT - APPS SCRIPT
+===================================================== */
 
+function jawab(teks){
+
+  return new Promise(function(resolve){
+
+    var script =
+      document.createElement("script");
+
+    var callbackName =
+      "inforbotCallback_" + Date.now();
+
+    window[callbackName] =
+      function(data){
+
+        if(
+          data &&
+          data.success &&
+          data.jawaban
+        ){
+
+          resolve(data.jawaban);
+
+        }else{
+
+          resolve(
+            "Maaf, INFORBOT belum mendapatkan jawaban dari server."
+          );
+
+        }
+
+        delete window[callbackName];
+
+        if(script.parentNode){
+          script.parentNode.removeChild(script);
+        }
+
+      };
+
+
+    var url =
+      APPS_SCRIPT_URL +
+      "?action=ask" +
+      "&q=" +
+      encodeURIComponent(teks) +
+      "&callback=" +
+      callbackName;
+
+
+    script.src=url;
+
+
+    script.onerror=function(){
+
+      resolve(
+        "Koneksi ke otak INFORBOT belum berhasil. Periksa koneksi Apps Script."
+      );
+
+      delete window[callbackName];
+
+      if(script.parentNode){
+        script.parentNode.removeChild(script);
+      }
+
+    };
+
+
+    document.body.appendChild(script);
+
+  });
+
+}
 
 /* =====================================================
    SPEECH RECOGNITION
@@ -797,50 +905,84 @@ if(Recognition){
    JAWABAN SEMENTARA
 ===================================================== */
 
-function jawab(teks){
+function jawab(teks) {
 
-  var p=
-    teks.toLowerCase();
+  return new Promise(function(resolve) {
+
+    var script = document.createElement("script");
+
+    var callbackName =
+      "inforbotCallback_" +
+      Date.now();
+
+    window[callbackName] =
+      function(data) {
+
+        try {
+
+          if (
+            data &&
+            data.success &&
+            data.jawaban
+          ) {
+
+            resolve(data.jawaban);
+
+          } else {
+
+            resolve(
+              "Maaf, saya belum mendapatkan jawaban dari server INFORBOT."
+            );
+
+          }
+
+        } catch (error) {
+
+          resolve(
+            "Terjadi kesalahan saat memproses jawaban."
+          );
+
+        }
+
+        delete window[callbackName];
+
+        if (script.parentNode) {
+          script.parentNode.removeChild(script);
+        }
+
+      };
 
 
-  if(
-    p.indexOf("informatika")>=0
-  ){
-
-    return "Informatika adalah ilmu yang mempelajari pengolahan informasi menggunakan komputer dan teknologi.";
-
-  }
-
-
-  if(
-    p.indexOf("ai")>=0 ||
-    p.indexOf("kecerdasan buatan")>=0
-  ){
-
-    return "AI atau kecerdasan buatan adalah teknologi yang memungkinkan komputer melakukan tugas yang biasanya membutuhkan kemampuan manusia.";
-
-  }
+    var url =
+      APPS_SCRIPT_URL +
+      "?action=ask" +
+      "&q=" +
+      encodeURIComponent(teks) +
+      "&callback=" +
+      callbackName;
 
 
-  if(
-    p.indexOf("komputer")>=0
-  ){
+    script.src = url;
 
-    return "Komputer adalah perangkat elektronik yang menerima data, memproses data, menyimpan data, dan menghasilkan informasi.";
+    script.onerror =
+      function() {
 
-  }
+        resolve(
+          "Koneksi ke otak INFORBOT belum berhasil. Periksa deployment Apps Script."
+        );
+
+        delete window[callbackName];
+
+        if (script.parentNode) {
+          script.parentNode.removeChild(script);
+        }
+
+      };
 
 
-  if(
-    p.indexOf("internet")>=0
-  ){
+    document.body.appendChild(script);
 
-    return "Internet adalah jaringan global yang menghubungkan berbagai perangkat untuk bertukar informasi.";
-
-  }
-
-
-  return "Saya mendengar pertanyaan kamu. Pada tahap berikutnya saya akan terhubung dengan mesin AI sehingga dapat memberikan jawaban yang lebih cerdas.";
+  });
 
 }
 
