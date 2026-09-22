@@ -160,63 +160,28 @@ button:active{
   text-shadow:0 0 12px #00aaff;
 }
 
-@media (max-width: 700px) {
+@media(max-width:700px){
 
-  #title h1 {
-    font-size: 21px;
+  #panel{
+    left:12px;
+    right:12px;
+    bottom:12px;
+    width:auto;
   }
 
-  #title p {
-    font-size: 11px;
+  #footer{
+    top:65px;
+    right:12px;
   }
 
-  #footer {
-    top: 75px;
-    right: 15px;
-    font-size: 11px;
-  }
-
-  #panel {
-    left: 15px;
-    right: 15px;
-    bottom: 15px;
-    width: auto;
-  }
-
-  #robotLabel {
-    display: none;
+  #robotName{
+    display:none;
   }
 }
-  #copyrightBottom{
-  position:absolute;
-  left:50%;
-  bottom:8px;
-  transform:translateX(-50%);
-  z-index:20;
-
-  color:#66ddff;
-  font-size:12px;
-  font-weight:bold;
-  letter-spacing:1px;
-
-  text-shadow:
-    0 0 8px #00aaff;
-}
-  
 </style>
-
-
 
 <!-- THREE.JS VERSI STABIL -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-
-<script>
-
-const APPS_SCRIPT_URL =
-"https://script.google.com/macros/s/AKfycbx-fdVRR04PL4rHHmYQZaQ1f-cMLFQV3IuB0sPFkhQojVqFkog_2bBlkavcw_FamS5q/exec";
-
-</script>
-  
 
 </head>
 
@@ -233,8 +198,8 @@ const APPS_SCRIPT_URL =
     © Rustam, SE
   </div>
 
-  <div id="copyrightBottom">
-  HAK CIPTA RUSTAM, S.E.
+  <div id="robotName">
+    INFORBOT
   </div>
 
   <div id="panel">
@@ -284,13 +249,7 @@ var camera =
 camera.position.set(
   0,
   1.8,
-  9
-);
-
-camera.lookAt(
-  0,
-  1.5,
-  0
+  7
 );
 
 
@@ -661,50 +620,7 @@ helloButton.onclick=function(){
   bicara(teks);
 
 };
-/* =====================================================
-   HUBUNGKAN KE OTAK INFORBOT - APPS SCRIPT
-===================================================== */
 
-recognition.onresult=function(event){
-
-  var teks =
-    event.results[0][0].transcript;
-
-  question.innerText =
-    "🗣️ " + teks;
-
-  status.innerText =
-    "🧠 MEMPROSES...";
-
-  answer.innerText =
-    "INFORBOT sedang berpikir...";
-
-
-  jawab(teks)
-    .then(function(jawaban){
-
-      answer.innerText =
-        jawaban;
-
-      bicara(jawaban);
-
-    })
-    .catch(function(error){
-
-      console.error(
-        "ERROR:",
-        error
-      );
-
-      answer.innerText =
-        "Maaf, terjadi kesalahan saat mengambil jawaban.";
-
-      status.innerText =
-        "⚠️ TERJADI KESALAHAN";
-
-    });
-
-};
 
 /* =====================================================
    SPEECH RECOGNITION
@@ -748,44 +664,24 @@ if(Recognition){
 
   recognition.onresult=function(event){
 
-  var teks =
-    event.results[0][0].transcript;
+    var teks =
+      event.results[0][0].transcript;
 
-  question.innerText =
-    "🗣️ " + teks;
+    question.innerText=
+      "🗣️ "+teks;
 
-  status.innerText =
-    "🧠 MEMPROSES...";
+    status.innerText=
+      "🧠 MEMPROSES...";
 
-  answer.innerText =
-    "INFORBOT sedang berpikir...";
+    var jawaban=
+      jawab(teks);
 
+    answer.innerText=
+      jawaban;
 
-  jawab(teks).then(function(jawaban){
+    bicara(jawaban);
 
-  answer.innerText =
-    jawaban;
-
-  bicara(jawaban);
-
-});
-
-  }).catch(function(error){
-
-    console.error(
-      "ERROR JAWABAN:",
-      error
-    );
-
-    answer.innerText =
-      "Maaf, terjadi kesalahan saat mengambil jawaban.";
-
-    status.innerText =
-      "⚠️ TERJADI KESALAHAN";
-
-  });
-
-};
+  };
 
 
   recognition.onerror=function(event){
@@ -901,84 +797,50 @@ if(Recognition){
    JAWABAN SEMENTARA
 ===================================================== */
 
-function jawab(teks) {
+function jawab(teks){
 
-  return new Promise(function(resolve) {
-
-    var script = document.createElement("script");
-
-    var callbackName =
-      "inforbotCallback_" +
-      Date.now();
-
-    window[callbackName] =
-      function(data) {
-
-        try {
-
-          if (
-            data &&
-            data.success &&
-            data.jawaban
-          ) {
-
-            resolve(data.jawaban);
-
-          } else {
-
-            resolve(
-              "Maaf, saya belum mendapatkan jawaban dari server INFORBOT."
-            );
-
-          }
-
-        } catch (error) {
-
-          resolve(
-            "Terjadi kesalahan saat memproses jawaban."
-          );
-
-        }
-
-        delete window[callbackName];
-
-        if (script.parentNode) {
-          script.parentNode.removeChild(script);
-        }
-
-      };
+  var p=
+    teks.toLowerCase();
 
 
-    var url =
-      APPS_SCRIPT_URL +
-      "?action=ask" +
-      "&q=" +
-      encodeURIComponent(teks) +
-      "&callback=" +
-      callbackName;
+  if(
+    p.indexOf("informatika")>=0
+  ){
+
+    return "Informatika adalah ilmu yang mempelajari pengolahan informasi menggunakan komputer dan teknologi.";
+
+  }
 
 
-    script.src = url;
+  if(
+    p.indexOf("ai")>=0 ||
+    p.indexOf("kecerdasan buatan")>=0
+  ){
 
-    script.onerror =
-      function() {
+    return "AI atau kecerdasan buatan adalah teknologi yang memungkinkan komputer melakukan tugas yang biasanya membutuhkan kemampuan manusia.";
 
-        resolve(
-          "Koneksi ke otak INFORBOT belum berhasil. Periksa deployment Apps Script."
-        );
-
-        delete window[callbackName];
-
-        if (script.parentNode) {
-          script.parentNode.removeChild(script);
-        }
-
-      };
+  }
 
 
-    document.body.appendChild(script);
+  if(
+    p.indexOf("komputer")>=0
+  ){
 
-  });
+    return "Komputer adalah perangkat elektronik yang menerima data, memproses data, menyimpan data, dan menghasilkan informasi.";
+
+  }
+
+
+  if(
+    p.indexOf("internet")>=0
+  ){
+
+    return "Internet adalah jaringan global yang menghubungkan berbagai perangkat untuk bertukar informasi.";
+
+  }
+
+
+  return "Saya mendengar pertanyaan kamu. Pada tahap berikutnya saya akan terhubung dengan mesin AI sehingga dapat memberikan jawaban yang lebih cerdas.";
 
 }
 
