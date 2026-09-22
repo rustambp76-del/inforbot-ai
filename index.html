@@ -330,7 +330,7 @@ function initThree(){
 
   scene = new THREE.Scene();
 
-  scene.background = new THREE.Color(0x020711);
+  scene.background = null;
 
   camera = new THREE.PerspectiveCamera(
     45,
@@ -343,7 +343,8 @@ function initThree(){
   camera.lookAt(0,1.55,0);
 
   renderer = new THREE.WebGLRenderer({
-    antialias:true
+    antialias:true,
+    alpha:true
   });
 
   renderer.setPixelRatio(
@@ -1018,10 +1019,10 @@ function pasangFotoKeRobot(dataFoto) {
     const canvas = document.createElement("canvas");
     const ctx = canvas.getContext("2d");
 
-    const cropW = img.width * 0.55;
-    const cropH = img.height * 0.62;
+    const cropW = img.width * 0.58;
+    const cropH = img.height * 0.50;
     const cropX = (img.width - cropW) / 2;
-    const cropY = img.height * 0.02;
+    const cropY = img.height * 0.01;
 
     canvas.width = 720;
     canvas.height = 820;
@@ -1041,7 +1042,7 @@ function pasangFotoKeRobot(dataFoto) {
       if(old.material) old.material.dispose();
     }
 
-    const fotoGeo = new THREE.PlaneGeometry(1.32, 1.50);
+    const fotoGeo = new THREE.PlaneGeometry(1.30, 1.12);
     const fotoMat = new THREE.MeshBasicMaterial({
       map: texture,
       transparent: true
@@ -1049,7 +1050,7 @@ function pasangFotoKeRobot(dataFoto) {
 
     const fotoWajah = new THREE.Mesh(fotoGeo, fotoMat);
     fotoWajah.name = "fotoWajah";
-    fotoWajah.position.set(0, 0, 0.79);
+    fotoWajah.position.set(0, 0.02, 0.79);
 
     /* Sedikit rounded-look lewat frame kepala; foto berada di dalam helm. */
     headGroup.add(fotoWajah);
