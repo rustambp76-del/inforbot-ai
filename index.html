@@ -665,76 +665,46 @@ helloButton.onclick=function(){
    HUBUNGKAN KE OTAK INFORBOT - APPS SCRIPT
 ===================================================== */
 
-function jawab(teks){
+recognition.onresult=function(event){
 
-  return new Promise(function(resolve){
+  var teks =
+    event.results[0][0].transcript;
 
-    var script =
-      document.createElement("script");
+  question.innerText =
+    "🗣️ " + teks;
 
-    var callbackName =
-      "inforbotCallback_" + Date.now();
+  status.innerText =
+    "🧠 MEMPROSES...";
 
-    window[callbackName] =
-      function(data){
-
-        if(
-          data &&
-          data.success &&
-          data.jawaban
-        ){
-
-          resolve(data.jawaban);
-
-        }else{
-
-          resolve(
-            "Maaf, INFORBOT belum mendapatkan jawaban dari server."
-          );
-
-        }
-
-        delete window[callbackName];
-
-        if(script.parentNode){
-          script.parentNode.removeChild(script);
-        }
-
-      };
+  answer.innerText =
+    "INFORBOT sedang berpikir...";
 
 
-    var url =
-      APPS_SCRIPT_URL +
-      "?action=ask" +
-      "&q=" +
-      encodeURIComponent(teks) +
-      "&callback=" +
-      callbackName;
+  jawab(teks)
+    .then(function(jawaban){
 
+      answer.innerText =
+        jawaban;
 
-    script.src=url;
+      bicara(jawaban);
 
+    })
+    .catch(function(error){
 
-    script.onerror=function(){
-
-      resolve(
-        "Koneksi ke otak INFORBOT belum berhasil. Periksa koneksi Apps Script."
+      console.error(
+        "ERROR:",
+        error
       );
 
-      delete window[callbackName];
+      answer.innerText =
+        "Maaf, terjadi kesalahan saat mengambil jawaban.";
 
-      if(script.parentNode){
-        script.parentNode.removeChild(script);
-      }
+      status.innerText =
+        "⚠️ TERJADI KESALAHAN";
 
-    };
+    });
 
-
-    document.body.appendChild(script);
-
-  });
-
-}
+};
 
 /* =====================================================
    SPEECH RECOGNITION
