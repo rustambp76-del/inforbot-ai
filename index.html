@@ -355,7 +355,9 @@ function initThree(){
     window.innerWidth,
     window.innerHeight
   );
-
+  
+  renderer.setClearColor(0x000000, 0);
+  
   document
     .getElementById("robotCanvas")
     .appendChild(renderer.domElement);
