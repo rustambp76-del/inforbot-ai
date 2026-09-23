@@ -456,16 +456,14 @@ robot.add(headGroup);
 
 /* FOTO KEPALA */
 
-const headLoader =
-  new THREE.TextureLoader();
+const headLoader = new THREE.TextureLoader();
 
 headLoader.load(
-  "INFORBOT_HEAD.png",
+  "./INFORBOT_HEAD.png",
 
   function(texture){
 
-    texture.encoding =
-      THREE.sRGBEncoding;
+    console.log("✅ INFORBOT_HEAD.png BERHASIL DIMUAT");
 
     const headGeo =
       new THREE.PlaneGeometry(
@@ -475,8 +473,9 @@ headLoader.load(
 
     const headMat =
       new THREE.MeshBasicMaterial({
-        map:texture,
-        transparent:true
+        map: texture,
+        transparent: true,
+        side: THREE.DoubleSide
       });
 
     const headFoto =
@@ -493,23 +492,20 @@ headLoader.load(
 
     headGroup.add(headFoto);
 
-    console.log(
-      "KEPALA INFORBOT BERHASIL DIMUAT"
-    );
+    console.log("✅ KEPALA SUDAH DITEMPEL KE ROBOT");
 
-    buatMataBerkedip(); 
-
+    buatMataBerkedip();
   },
 
-  undefined,
+  function(progress){
+    console.log("Memuat kepala...", progress);
+  },
 
   function(error){
-
-    console.log(
-      "GAGAL MEMUAT INFORBOT_HEAD.png",
+    console.error(
+      "❌ GAGAL MEMUAT INFORBOT_HEAD.png",
       error
     );
-
   }
 );
 
