@@ -700,6 +700,46 @@ function kedipMata(){
   },40);
 }
 
+/* =====================================================
+   ANIMASI MATA BERKEDIP
+===================================================== */
+
+function kedipMata(){
+
+  if(!mataKiri || !mataKanan){
+    return;
+  }
+
+  mataKiri.scale.y = 0.08;
+  mataKanan.scale.y = 0.08;
+
+  setTimeout(function(){
+
+    mataKiri.scale.y = 1;
+    mataKanan.scale.y = 1;
+
+    jadwalkanKedipan();
+
+  },150);
+}
+
+
+/* =====================================================
+   JADWAL KEDIP
+===================================================== */
+
+function jadwalkanKedipan(){
+
+  const waktu =
+    3000 + Math.random() * 4000;
+
+  setTimeout(function(){
+
+    kedipMata();
+
+  },waktu);
+}
+  
 function animate(){
 
   requestAnimationFrame(animate);
