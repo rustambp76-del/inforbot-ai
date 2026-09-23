@@ -1012,37 +1012,52 @@ function ambilFotoRobot() {
 
 function pasangFotoKeRobot(dataFoto) {
 
-  console.log("Menyiapkan wajah robot...");
+  console.log("MEMPROSES CROP WAJAH RUSBOT...");
 
   const img = new Image();
 
   img.onload = function() {
 
-    console.log("Foto Rusbot berhasil dimuat.");
-
-    /*
-     * CANVAS UNTUK MEMOTONG BAGIAN KEPALA
-     */
+    // =========================================
+    // CANVAS UNTUK CROP WAJAH
+    // =========================================
     const canvas = document.createElement("canvas");
+
+    const ukuran = Math.min(
+      img.width,
+      img.height
+    );
+
+    canvas.width = 600;
+    canvas.height = 600;
 
     const ctx = canvas.getContext("2d");
 
-    /*
-     * Kita mengambil bagian atas foto.
-     * Bagian bawah/baju dipotong.
-     */
-    const cropHeight =
-      Math.floor(img.height * 0.62);
+    // =========================================
+    // AREA CROP
+    // Fokus ke bagian kepala/wajah
+    // =========================================
 
-    canvas.width = img.width;
-    canvas.height = cropHeight;
+    const cropWidth =
+      img.width * 0.72;
+
+    const cropHeight =
+      img.height * 0.72;
+
+    const cropX =
+      (img.width - cropWidth) / 2;
+
+    // Sedikit dinaikkan agar bagian baju
+    // lebih sedikit masuk
+    const cropY =
+      img.height * 0.04;
 
     ctx.drawImage(
       img,
 
-      0,
-      0,
-      img.width,
+      cropX,
+      cropY,
+      cropWidth,
       cropHeight,
 
       0,
@@ -1051,71 +1066,84 @@ function pasangFotoKeRobot(dataFoto) {
       canvas.height
     );
 
-    /*
-     * Jadikan hasil crop sebagai texture Three.js
-     */
-    const texture =
-      new THREE.CanvasTexture(canvas);
+    // =========================================
+    // HASIL CROP
+    // =========================================
 
-    texture.encoding =
-      THREE.sRGBEncoding;
-
-    texture.needsUpdate = true;
-
-    /*
-     * Ukuran wajah
-     */
-    const fotoGeo =
-      new THREE.PlaneGeometry(
-        1.35,
-        0.90
+    const hasilCrop =
+      canvas.toDataURL(
+        "image/png"
       );
 
-    const fotoMat =
-      new THREE.MeshBasicMaterial({
-        map: texture,
-        transparent: true
-      });
+    const textureLoader =
+      new THREE.TextureLoader();
 
-    const fotoWajah =
-      new THREE.Mesh(
-        fotoGeo,
-        fotoMat
-      );
+    textureLoader.load(
+      hasilCrop,
 
-    /*
-     * Posisi di depan kepala robot
-     */
-    fotoWajah.position.set(
-      0,
-      3.15,
-      1.49
+      function(texture) {
+
+        texture.encoding =
+          THREE.sRGBEncoding;
+
+        const fotoGeo =
+          new THREE.PlaneGeometry(
+            1.35,
+            1.35
+          );
+
+        const fotoMat =
+          new THREE.MeshBasicMaterial({
+            map: texture,
+            transparent: true
+          });
+
+        const fotoWajah =
+          new THREE.Mesh(
+            fotoGeo,
+            fotoMat
+          );
+
+        fotoWajah.position.set(
+          0,
+          3.15,
+          1.49
+        );
+
+        fotoWajah.scale.set(
+          0.72,
+          0.72,
+          0.72
+        );
+
+        robot.add(
+          fotoWajah
+        );
+
+        console.log(
+          "CROP WAJAH RUSBOT BERHASIL."
+        );
+
+      },
+
+      undefined,
+
+      function(error) {
+
+        console.log(
+          "Gagal memasang hasil crop:",
+          error
+        );
+
+      }
     );
 
-    /*
-     * Ukuran foto
-     */
-    fotoWajah.scale.set(
-      0.82,
-      0.82,
-      0.82
-    );
-
-    /*
-     * Pasang ke robot
-     */
-    robot.add(fotoWajah);
-
-    console.log(
-      "WAJAH RUSBOT BERHASIL DIPASANG."
-    );
   };
 
-  img.onerror = function(error) {
+  img.onerror = function() {
 
     console.log(
-      "Gagal memuat foto Rusbot:",
-      error
+      "Gagal membaca foto robot."
     );
 
   };
