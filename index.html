@@ -1011,57 +1011,112 @@ function ambilFotoRobot() {
 
 function pasangFotoKeRobot(dataFoto) {
 
-  console.log("DATA FOTO DITERIMA:", dataFoto ? "YA" : "TIDAK");
+  console.log("Menyiapkan wajah robot...");
 
   const img = new Image();
+
   img.onload = function() {
 
-    /* Crop kepala dari foto: bagian tengah atas.
-       Nilai crop dapat disesuaikan nanti tanpa mengubah API. */
+    console.log("Foto Rusbot berhasil dimuat.");
+
+    /*
+     * CANVAS UNTUK MEMOTONG BAGIAN KEPALA
+     */
     const canvas = document.createElement("canvas");
+
     const ctx = canvas.getContext("2d");
 
-    const cropW = img.width * 0.58;
-    const cropH = img.height * 0.50;
-    const cropX = (img.width - cropW) / 2;
-    const cropY = img.height * 0.01;
+    /*
+     * Kita mengambil bagian atas foto.
+     * Bagian bawah/baju dipotong.
+     */
+    const cropHeight =
+      Math.floor(img.height * 0.62);
 
-    canvas.width = 720;
-    canvas.height = 820;
+    canvas.width = img.width;
+    canvas.height = cropHeight;
 
     ctx.drawImage(
-      img, cropX, cropY, cropW, cropH,
-      0, 0, canvas.width, canvas.height
+      img,
+
+      0,
+      0,
+      img.width,
+      cropHeight,
+
+      0,
+      0,
+      canvas.width,
+      canvas.height
     );
 
-    const texture = new THREE.CanvasTexture(canvas);
-    texture.encoding = THREE.sRGBEncoding;
+    /*
+     * Jadikan hasil crop sebagai texture Three.js
+     */
+    const texture =
+      new THREE.CanvasTexture(canvas);
+
+    texture.encoding =
+      THREE.sRGBEncoding;
+
     texture.needsUpdate = true;
 
-    const old = headGroup.getObjectByName("fotoWajah");
-    if(old){
-      headGroup.remove(old);
-      if(old.material) old.material.dispose();
-    }
+    /*
+     * Ukuran wajah
+     */
+    const fotoGeo =
+      new THREE.PlaneGeometry(
+        1.35,
+        0.90
+      );
 
-    const fotoGeo = new THREE.PlaneGeometry(1.30, 1.12);
-    const fotoMat = new THREE.MeshBasicMaterial({
-      map: texture,
-      transparent: true
-    });
+    const fotoMat =
+      new THREE.MeshBasicMaterial({
+        map: texture,
+        transparent: true
+      });
 
-    const fotoWajah = new THREE.Mesh(fotoGeo, fotoMat);
-    fotoWajah.name = "fotoWajah";
-    fotoWajah.position.set(0, 0.02, 0.79);
+    const fotoWajah =
+      new THREE.Mesh(
+        fotoGeo,
+        fotoMat
+      );
 
-    /* Sedikit rounded-look lewat frame kepala; foto berada di dalam helm. */
-    headGroup.add(fotoWajah);
+    /*
+     * Posisi di depan kepala robot
+     */
+    fotoWajah.position.set(
+      0,
+      3.15,
+      1.49
+    );
 
-    console.log("Foto kepala berhasil dipasang ke kepala robot.");
+    /*
+     * Ukuran foto
+     */
+    fotoWajah.scale.set(
+      0.82,
+      0.82,
+      0.82
+    );
+
+    /*
+     * Pasang ke robot
+     */
+    robot.add(fotoWajah);
+
+    console.log(
+      "WAJAH RUSBOT BERHASIL DIPASANG."
+    );
   };
 
   img.onerror = function(error) {
-    console.log("Gagal memuat foto kepala:", error);
+
+    console.log(
+      "Gagal memuat foto Rusbot:",
+      error
+    );
+
   };
 
   img.src = dataFoto;
