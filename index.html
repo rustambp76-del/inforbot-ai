@@ -439,22 +439,73 @@ function initThree(){
   robot.add(chest);
 
 
-  /* HEAD */
+/* =====================================================
+   KEPALA INFORBOT AI - GAMBAR FUTURISTIK
+===================================================== */
 
-  headGroup = new THREE.Group();
+const headGroup = new THREE.Group();
 
-  headGroup.position.y = 3.15;
+headGroup.position.y = 3.15;
 
-  robot.add(headGroup);
+robot.add(headGroup);
 
 
-  const headGeo =
-    new THREE.BoxGeometry(2.05,1.6,1.48);
+/* FOTO KEPALA */
 
-  const head =
-    new THREE.Mesh(headGeo,bodyMat);
+const headLoader =
+  new THREE.TextureLoader();
 
-  headGroup.add(head);
+headLoader.load(
+  "INFORBOT_HEAD.png",
+
+  function(texture){
+
+    texture.encoding =
+      THREE.sRGBEncoding;
+
+    const headGeo =
+      new THREE.PlaneGeometry(
+        2.35,
+        1.78
+      );
+
+    const headMat =
+      new THREE.MeshBasicMaterial({
+        map:texture,
+        transparent:true
+      });
+
+    const headFoto =
+      new THREE.Mesh(
+        headGeo,
+        headMat
+      );
+
+    headFoto.position.set(
+      0,
+      0.05,
+      0.78
+    );
+
+    headGroup.add(headFoto);
+
+    console.log(
+      "KEPALA INFORBOT BERHASIL DIMUAT"
+    );
+
+  },
+
+  undefined,
+
+  function(error){
+
+    console.log(
+      "GAGAL MEMUAT INFORBOT_HEAD.png",
+      error
+    );
+
+  }
+);
 
 
   /* FACE */
