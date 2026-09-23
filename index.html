@@ -355,10 +355,16 @@ function initThree(){
     Math.min(window.devicePixelRatio,2)
   );
 
-  renderer.setSize(
-    window.innerWidth,
-    window.innerHeight
-  );
+  const lebarApp =
+  document.getElementById("app").clientWidth;
+
+const tinggiApp =
+  document.getElementById("app").clientHeight;
+
+renderer.setSize(
+  lebarApp,
+  tinggiApp
+);
   
   renderer.setClearColor(0x000000, 0);
   
@@ -749,15 +755,21 @@ window.addEventListener(
 
     if(!camera || !renderer) return;
 
-    camera.aspect =
-      window.innerWidth /
-      window.innerHeight;
+    const lebarApp =
+  document.getElementById("app").clientWidth;
 
-    camera.updateProjectionMatrix();
+const tinggiApp =
+  document.getElementById("app").clientHeight;
 
-    renderer.setSize(
-      window.innerWidth,
-      window.innerHeight
+camera.aspect =
+  lebarApp / tinggiApp;
+
+camera.updateProjectionMatrix();
+
+renderer.setSize(
+  lebarApp,
+  tinggiApp
+);
     );
 
   }
