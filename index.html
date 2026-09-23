@@ -508,57 +508,7 @@ headLoader.load(
 );
 
 
-  /* FACE */
-
-  const faceGeo =
-    new THREE.BoxGeometry(1.55,.9,.08);
-
-  const faceMat =
-    new THREE.MeshStandardMaterial({
-      color:0x07111c,
-      metalness:.5,
-      roughness:.2
-    });
-
-  const face =
-    new THREE.Mesh(faceGeo,faceMat);
-
-  face.position.z = .75;
-
-  headGroup.add(face);
-
-
-  /* MATA */
-
-  const eyeGeo =
-    new THREE.BoxGeometry(.38,.16,.06);
-
-  mataKiri =
-    new THREE.Mesh(eyeGeo,blueMat);
-
-  mataKanan =
-    new THREE.Mesh(eyeGeo,blueMat);
-
-  mataKiri.position.set(-.42,.18,.81);
-  mataKanan.position.set(.42,.18,.81);
-
-  headGroup.add(mataKiri);
-  headGroup.add(mataKanan);
-
-
-  /* MULUT */
-
-  const mouthGeo =
-    new THREE.BoxGeometry(.7,.12,.06);
-
-  mulut =
-    new THREE.Mesh(mouthGeo,blueMat);
-
-  mulut.position.set(0,-.25,.82);
-
-  headGroup.add(mulut);
-
-
+  
   /* LEHER */
 
   const neckGeo =
