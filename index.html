@@ -422,6 +422,10 @@ let mataKiri;
 let mataKanan;
 let mulut;
 
+let kelopakKiri;
+let kelopakKanan;
+let sedangBerkedip = false;
+
 let robotIdle = true;
 
 
@@ -591,6 +595,8 @@ headLoader.load(
       "KEPALA INFORBOT BERHASIL DIMUAT"
     );
 
+    buatMataBerkedip(); 
+
   },
 
   undefined,
@@ -671,6 +677,130 @@ function buatLengan(sisi){
 
 }
 
+/* =====================================================
+   MATA ROBOT BERKEDIP
+===================================================== */
+
+function buatMataBerkedip(){
+
+  if(!headGroup) return;
+
+  const materialKelopak =
+    new THREE.MeshBasicMaterial({
+      color:0x6b6258
+    });
+
+  const geoKelopak =
+    new THREE.PlaneGeometry(
+      0.42,
+      0.12
+    );
+
+  kelopakKiri =
+    new THREE.Mesh(
+      geoKelopak,
+      materialKelopak
+    );
+
+  kelopakKanan =
+    new THREE.Mesh(
+      geoKelopak,
+      materialKelopak
+    );
+
+  kelopakKiri.position.set(
+    -0.42,
+    0.30,
+    0.82
+  );
+
+  kelopakKanan.position.set(
+     0.42,
+    0.30,
+    0.82
+  );
+
+  headGroup.add(kelopakKiri);
+  headGroup.add(kelopakKanan);
+
+  setTimeout(
+    kedipMata,
+    2500
+  );
+}
+
+
+/* =====================================================
+   ANIMASI KEDIP
+===================================================== */
+
+function kedipMata(){
+
+  if(!kelopakKiri || !kelopakKanan)
+    return;
+
+  if(sedangBerkedip)
+    return;
+
+  sedangBerkedip = true;
+
+  kelopakKiri.scale.y = 1;
+  kelopakKanan.scale.y = 1;
+
+  let langkah = 0;
+
+  const tutup = setInterval(function(){
+
+    langkah += 0.25;
+
+    kelopakKiri.scale.y =
+      Math.max(0.05, 1 - langkah);
+
+    kelopakKanan.scale.y =
+      Math.max(0.05, 1 - langkah);
+
+    if(langkah >= 1){
+
+      clearInterval(tutup);
+
+      setTimeout(function(){
+
+        let buka = 0;
+
+        const bukaInterval =
+          setInterval(function(){
+
+            buka += 0.25;
+
+            kelopakKiri.scale.y =
+              Math.min(1, buka);
+
+            kelopakKanan.scale.y =
+              Math.min(1, buka);
+
+            if(buka >= 1){
+
+              clearInterval(
+                bukaInterval
+              );
+
+              sedangBerkedip =
+                false;
+
+              setTimeout(
+                kedipMata,
+                3000 + Math.random()*4000
+              );
+            }
+
+          },40);
+
+      },100);
+
+    }
+
+  },40);
+}
 
 function animate(){
 
