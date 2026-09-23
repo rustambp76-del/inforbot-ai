@@ -749,31 +749,30 @@ function animate(){
    RESIZE
 ===================================================== */
 
-window.addEventListener(
-  "resize",
-  function(){
+window.addEventListener("resize", function(){
 
-    if(!camera || !renderer) return;
+  if(!camera || !renderer) return;
 
-    const lebarApp =
-  document.getElementById("app").clientWidth;
+  const app =
+    document.getElementById("app");
 
-const tinggiApp =
-  document.getElementById("app").clientHeight;
+  const lebarApp =
+    app.clientWidth;
 
-camera.aspect =
-  lebarApp / tinggiApp;
+  const tinggiApp =
+    app.clientHeight;
 
-camera.updateProjectionMatrix();
+  camera.aspect =
+    lebarApp / tinggiApp;
 
-renderer.setSize(
-  lebarApp,
-  tinggiApp
-);
-    );
+  camera.updateProjectionMatrix();
 
-  }
-);
+  renderer.setSize(
+    lebarApp,
+    tinggiApp
+  );
+
+});
 
 
 /* =====================================================
