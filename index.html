@@ -14,7 +14,12 @@
   box-sizing:border-box;
 }
 
-html,body{
+/* =====================================================
+   DASAR HALAMAN
+===================================================== */
+
+html,
+body{
   margin:0;
   width:100%;
   height:100%;
@@ -24,6 +29,11 @@ html,body{
   color:white;
 }
 
+
+/* =====================================================
+   APLIKASI
+===================================================== */
+
 #app{
   position:relative;
   width:100%;
@@ -31,23 +41,61 @@ html,body{
   overflow:hidden;
 }
 
+
+/* =====================================================
+   BACKGROUND INFORBOT
+   TAJAM - TANPA BLUR
+===================================================== */
+
 #app::before{
   content:"";
   position:absolute;
-  inset:-24px;
+  inset:0;
+
   z-index:0;
-  background:url("INFORBOT_BG.png") center/cover no-repeat;
-  filter:blur(10px) brightness(.55) saturate(1.15);
-  transform:scale(1.05);
+
+  background-image:url("INFORBOT_BG.png");
+  background-position:center center;
+  background-size:cover;
+  background-repeat:no-repeat;
+
+  /* TIDAK ADA BLUR */
+  filter:brightness(.72) saturate(1.12);
+
+  /* Jangan diperbesar berlebihan */
+  transform:none;
 }
+
+
+/* =====================================================
+   LAPISAN GELAP TIPIS
+===================================================== */
 
 #app::after{
   content:"";
   position:absolute;
   inset:0;
+
   z-index:1;
+
   pointer-events:none;
-  background:linear-gradient(180deg,rgba(0,8,24,.28),rgba(0,8,22,.62));
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(0,8,24,.12),
+      rgba(0,8,22,.28)
+    );
+}
+
+
+/* =====================================================
+   SEMUA KONTEN DI ATAS BACKGROUND
+===================================================== */
+
+#app > *{
+  position:relative;
+  z-index:2;
 }
 
 #robotCanvas{
@@ -665,7 +713,7 @@ function initThree(){
 }
 
 /* =====================================================
-   MULUT INFORBOT - VERSI BARU
+   MULUT INFORBOT
 ===================================================== */
 
 function buatMulut(){
@@ -675,29 +723,23 @@ function buatMulut(){
     return;
   }
 
-  /* Hapus mulut lama jika ada */
   if(mulut){
     headGroup.remove(mulut);
     mulut = null;
   }
 
-  /*
-     Bentuk mulut menggunakan lingkaran.
-     Ketika scale.y berubah, lingkaran akan
-     terlihat seperti mulut membuka dan menutup.
-  */
-
   const mulutGeo =
-    new THREE.CircleGeometry(
-      0.18,
+    new THREE.EllipseGeometry(
+      0.16,
+      0.055,
       32
     );
 
   const mulutMat =
     new THREE.MeshBasicMaterial({
-      color:0x080808,
+      color:0x050505,
       transparent:true,
-      opacity:0.95,
+      opacity:0.90,
       side:THREE.DoubleSide,
       depthWrite:false
     });
@@ -709,29 +751,22 @@ function buatMulut(){
     );
 
   /*
-     POSISI MULUT PADA WAJAH
-     
-     Foto kepala:
-     ukuran = 2.35 x 1.78
-     
-     Mulut wajah berada lebih rendah,
-     sehingga Y kita turunkan.
+     POSISI MULUT ASLI PADA FOTO
   */
 
   mulut.position.set(
     0,
-    -0.43,
+    -0.30,
     0.815
   );
 
   /*
-     Bentuk awal:
-     tipis seperti mulut tertutup.
+     MULUT TERTUTUP
   */
 
   mulut.scale.set(
-    1.35,
-    0.18,
+    1.15,
+    0.35,
     1
   );
 
@@ -742,7 +777,6 @@ function buatMulut(){
   console.log(
     "👄 MULUT INFORBOT BERHASIL DIBUAT"
   );
-
 }
   
 function buatLengan(sisi){
@@ -889,21 +923,37 @@ function berhentiMulutBerbicara(){
 
 function animasiMulut(){
 
-  if(!mulut || !mulutBerbicara){
+  if(!mulut){
+    return;
+  }
+
+  if(!mulutBerbicara){
+
+    mulut.scale.y =
+      THREE.MathUtils.lerp(
+        mulut.scale.y,
+        0.35,
+        0.25
+      );
 
     return;
-
   }
 
   const waktu =
-    Date.now() * 0.018;
+    Date.now() * 0.025;
 
   const buka =
     0.35 +
-    Math.abs(Math.sin(waktu)) * 0.9;
+    Math.abs(
+      Math.sin(waktu)
+    ) * 1.15;
 
-  mulut.scale.y = buka;
-
+  mulut.scale.y =
+    THREE.MathUtils.lerp(
+      mulut.scale.y,
+      buka,
+      0.40
+    );
 }
 
 /* =====================================================
