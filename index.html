@@ -1,1 +1,1189 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<title>INFORBOT AI V4.0</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22><text y=%2250%22 font-size=%2250%22>🤖</text></svg>">
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+<style>
+*{
+  box-sizing:border-box;
+}
+
+html,body{
+  margin:0;
+  width:100%;
+  height:100%;
+  overflow:hidden;
+  font-family:Arial,sans-serif;
+  background:#020914;
+  color:white;
+}
+
+#app{
+  position:relative;
+  width:100%;
+  height:100%;
+  overflow:hidden;
+}
+
+#app::before{
+  content:"";
+  position:absolute;
+  inset:-24px;
+  z-index:0;
+  background:url("INFORBOT_BG.png") center/cover no-repeat;
+  filter:blur(10px) brightness(.55) saturate(1.15);
+  transform:scale(1.05);
+}
+
+#app::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:1;
+  pointer-events:none;
+  background:linear-gradient(180deg,rgba(0,8,24,.28),rgba(0,8,22,.62));
+}
+
+#robotCanvas{
+  position:absolute;
+  inset:0;
+  z-index:5;
+}
+
+#robotCanvas::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background:linear-gradient(180deg,rgba(0,10,25,.18),rgba(0,8,20,.34));
+}
+
+#judul{
+  position:absolute;
+  top:18px;
+  left:50%;
+  transform:translateX(-50%);
+  z-index:10;
+  text-align:center;
+}
+
+#judul h1{
+  margin:0;
+  font-size:30px;
+  color:#66ddff;
+  text-shadow:0 0 15px #008cff;
+}
+
+#judul p{
+  margin:5px 0 0;
+  font-size:13px;
+  color:#bdefff;
+}
+
+#akun{
+  position:absolute;
+  top:15px;
+  right:18px;
+  z-index:20;
+  color:#66ddff;
+  font-size:13px;
+  font-weight:bold;
+}
+
+#panel{
+  position:absolute;
+  left:50%;
+  bottom:55px;
+  transform:translateX(-50%);
+  width:min(700px,92%);
+  z-index:20;
+  padding:18px;
+  border:1px solid #168cff;
+  border-radius:18px;
+  background:rgba(0,10,25,.82);
+  box-shadow:0 0 25px rgba(0,150,255,.35);
+  backdrop-filter:blur(8px);
+}
+
+#status{
+  text-align:center;
+  color:#66ddff;
+  font-weight:bold;
+  margin-bottom:10px;
+}
+
+#pertanyaan{
+  min-height:30px;
+  color:#ddd;
+  font-size:14px;
+  margin-bottom:8px;
+}
+
+#jawaban{
+  min-height:45px;
+  color:#fff;
+  line-height:1.5;
+  font-size:15px;
+}
+
+#tombol{
+  display:flex;
+  justify-content:center;
+  gap:10px;
+  margin-top:14px;
+  flex-wrap:wrap;
+}
+
+button{
+  border:none;
+  border-radius:12px;
+  padding:11px 18px;
+  font-size:14px;
+  font-weight:bold;
+  cursor:pointer;
+  color:white;
+  background:#075b91;
+  box-shadow:0 0 12px rgba(0,150,255,.35);
+}
+
+button:hover{
+  background:#087abf;
+}
+
+button:disabled{
+  opacity:.45;
+  cursor:not-allowed;
+}
+
+#micBtn{
+  background:#006d52;
+}
+
+#helloBtn{
+  background:#51429a;
+}
+
+#copyrightTop{
+  position:absolute;
+  left:18px;
+  top:15px;
+  z-index:20;
+  color:#66ddff;
+  font-size:12px;
+}
+
+#copyrightBottom{
+  position:absolute;
+  left:50%;
+  bottom:8px;
+  transform:translateX(-50%);
+  z-index:20;
+  color:#66ddff;
+  font-size:12px;
+  font-weight:bold;
+  letter-spacing:1px;
+  text-shadow:0 0 8px #00aaff;
+}
+
+
+/* =====================================================
+   INFORBOT AI V4 - FUTURISTIC UI
+===================================================== */
+#judul{
+  top:18px; left:32px; transform:none; text-align:left;
+  padding:10px 26px 12px; border:1px solid #13aaff;
+  border-radius:18px; background:rgba(0,18,48,.78);
+  box-shadow:0 0 28px rgba(0,153,255,.42), inset 0 0 20px rgba(0,153,255,.12);
+}
+#judul h1{font-size:34px; letter-spacing:1px;}
+#judul p{font-size:12px; margin-top:2px;}
+#akun{top:22px; right:24px; padding:9px 16px; border:1px solid #18aaff; border-radius:22px; background:rgba(0,18,48,.72); box-shadow:0 0 18px rgba(0,153,255,.35);}
+#copyrightTop{top:auto; left:18px; bottom:18px; padding:8px 22px; border-radius:0 22px 22px 0; background:rgba(0,30,70,.72);}
+#copyrightBottom{display:none;}
+#panel{left:50%; bottom:18px; width:min(1180px,94%); padding:14px 18px; border-radius:24px; display:grid; grid-template-columns:150px 1fr 330px; gap:14px; align-items:center; background:rgba(0,20,55,.84); border:1px solid #16aaff; box-shadow:0 0 30px rgba(0,153,255,.42), inset 0 0 22px rgba(0,153,255,.1);}
+#status{grid-column:1/-1; margin:0; font-size:12px; letter-spacing:1px;}
+#pertanyaan{margin:0; padding:13px 16px; min-height:48px; border:1px solid rgba(35,164,255,.55); border-radius:12px; background:rgba(4,45,95,.65);}
+#jawaban{margin:0; min-height:48px; padding:13px 16px; border:1px solid rgba(35,164,255,.45); border-radius:12px; background:rgba(4,35,75,.55);}
+#tombol{grid-column:1; grid-row:3; margin:0; display:flex; flex-direction:column; gap:8px;}
+#tombol button{width:100%; padding:12px 10px;}
+#panel #pertanyaan{grid-column:2; grid-row:3;}
+#panel #jawaban{grid-column:3; grid-row:3;}
+#panel #tombol{grid-column:1; grid-row:3;}
+#menuKiri,#fiturKanan{position:absolute; z-index:25; display:flex; flex-direction:column; gap:7px; padding:12px; border:1px solid #159dff; border-radius:18px; background:rgba(0,17,48,.72); box-shadow:0 0 24px rgba(0,153,255,.3); backdrop-filter:blur(7px);}
+#menuKiri{left:22px; top:170px; width:220px;}
+#fiturKanan{right:22px; top:220px; width:205px;}
+.uiItem{padding:11px 13px; border:1px solid rgba(28,157,255,.65); border-radius:12px; background:rgba(0,65,130,.42); color:#e9fbff; font-weight:bold; font-size:13px; text-align:left; cursor:pointer; box-shadow:inset 0 0 12px rgba(0,153,255,.08);}
+.uiItem:hover{background:rgba(0,108,190,.58); transform:translateX(2px);}
+@media(max-width:900px){#menuKiri{left:10px;top:145px;width:175px;}#fiturKanan{right:10px;top:145px;width:160px;}#menuKiri .uiItem,#fiturKanan .uiItem{font-size:11px;padding:9px;}#judul{left:50%;transform:translateX(-50%);width:max-content;max-width:72%;}#judul h1{font-size:25px;}#panel{grid-template-columns:1fr;bottom:8px;}#panel #tombol,#panel #pertanyaan,#panel #jawaban{grid-column:1;grid-row:auto;}#copyrightTop{display:none;}}
+
+@media(max-width:600px){
+  #judul h1{
+    font-size:23px;
+  }
+
+  #judul p{
+    font-size:11px;
+  }
+
+  #panel{
+    bottom:42px;
+    padding:12px;
+  }
+
+  button{
+    padding:10px 14px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div id="app">
+
+  <div id="robotCanvas"></div>
+
+  <div id="copyrightTop">© Rustam, SE</div>
+
+  <div id="akun">👤 Guru_Hebat</div>
+
+  <div id="judul">
+    <h1>🤖 INFORBOT AI</h1>
+    <p>Asisten Virtual Informatika • AI • Teknologi</p>
+  </div>
+
+  <div id="menuKiri">
+    <div class="uiItem">🏠 Beranda</div>
+    <div class="uiItem">💻 Informatika</div>
+    <div class="uiItem">🧠 AI</div>
+    <div class="uiItem">&lt;/&gt; Pemrograman</div>
+    <div class="uiItem">🌐 Jaringan &amp; Internet</div>
+    <div class="uiItem">🛡️ Keamanan Digital</div>
+    <div class="uiItem">⚙️ Teknologi Terbaru</div>
+    <div class="uiItem">🎓 Kelas VII - IX</div>
+    <div class="uiItem">👨‍🏫 Mode Guru</div>
+    <div class="uiItem">👥 Mode Siswa</div>
+  </div>
+
+  <div id="fiturKanan">
+    <div class="uiItem">🎤 Bicara<br><small>(Mulai / Berhenti)</small></div>
+    <div class="uiItem">🔊 Jawab<br><small>(Suara Robot)</small></div>
+    <div class="uiItem">〰️ AI<br><small>(Pemrosesan Pertanyaan)</small></div>
+  </div>
+
+  <div id="panel">
+    <div id="status">SIAP MEMBANTU</div>
+    <div id="tombol">
+      <button id="helloBtn">👋 Sapa Robot</button>
+      <button id="micBtn">🎤 Mulai Bicara</button>
+    </div>
+    <div id="pertanyaan">Pertanyaan: -</div>
+    <div id="jawaban">Halo! Saya INFORBOT AI. Silakan ajukan pertanyaan tentang Informatika, AI, dan teknologi.</div>
+  </div>
+
+</div>
+
+<script>
+
+/* =====================================================
+   KONFIGURASI
+===================================================== */
+
+const APPS_SCRIPT_URL =
+"https://script.google.com/macros/s/AKfycbxoGT2P08O02nVmzJIcKqr-wFTK1sfGMB5vHjUIXiTbJIX1e37LC11pmHpwn1cYOohRSg/exec";
+
+
+/* =====================================================
+   ELEMENT
+===================================================== */
+
+const statusEl = document.getElementById("status");
+const pertanyaanEl = document.getElementById("pertanyaan");
+const jawabanEl = document.getElementById("jawaban");
+const micBtn = document.getElementById("micBtn");
+const helloBtn = document.getElementById("helloBtn");
+
+
+/* =====================================================
+   THREE.JS
+===================================================== */
+
+let scene;
+let camera;
+let renderer;
+let robot;
+let headGroup;
+
+let mataKiri;
+let mataKanan;
+let mulut;
+
+let robotIdle = true;
+let waktuAnimasi = 0;
+let mulutBerbicara = false;
+let sedangBerkedip = false;
+let kedipTimer = null;
+
+
+function initThree(){
+
+  scene = new THREE.Scene();
+
+  scene.background = null;
+
+  camera = new THREE.PerspectiveCamera(
+    45,
+    window.innerWidth / window.innerHeight,
+    0.1,
+    100
+  );
+
+  camera.position.set(0,1.9,9.4);
+  camera.lookAt(0,1.55,0);
+
+  renderer = new THREE.WebGLRenderer({
+    antialias:true,
+    alpha:true
+  });
+
+  renderer.setPixelRatio(
+    Math.min(window.devicePixelRatio,2)
+  );
+
+  renderer.setSize(
+    window.innerWidth,
+    window.innerHeight
+  );
+
+  document
+    .getElementById("robotCanvas")
+    .appendChild(renderer.domElement);
+
+
+  /* LIGHT */
+
+  const ambient = new THREE.AmbientLight(
+    0xffffff,
+    1.3
+  );
+
+  scene.add(ambient);
+
+
+  const light = new THREE.PointLight(
+    0x22aaff,
+    2.5,
+    20
+  );
+
+  light.position.set(0,4,5);
+
+  scene.add(light);
+
+
+  /* ROBOT */
+
+  robot = new THREE.Group();
+
+  robot.position.y = -1.05;
+
+  scene.add(robot);
+
+
+  const bodyMat = new THREE.MeshStandardMaterial({
+    color:0xe8f2f5,
+    metalness:.7,
+    roughness:.25
+  });
+
+  const darkMat = new THREE.MeshStandardMaterial({
+    color:0x101820,
+    metalness:.8,
+    roughness:.2
+  });
+
+  const blueMat = new THREE.MeshStandardMaterial({
+    color:0x0099ff,
+    emissive:0x0066aa,
+    emissiveIntensity:1.5
+  });
+
+
+  /* BODY */
+
+  const bodyGeo =
+    new THREE.BoxGeometry(2.2,2.4,1.3);
+
+  const body =
+    new THREE.Mesh(bodyGeo,bodyMat);
+
+  body.position.y = 1.35;
+
+  robot.add(body);
+
+
+  /* CHEST */
+
+  const chestGeo =
+    new THREE.BoxGeometry(.8,.45,.08);
+
+  const chest =
+    new THREE.Mesh(chestGeo,blueMat);
+
+  chest.position.set(0,1.45,.68);
+
+  robot.add(chest);
+
+
+  /* ===================================================
+     KEPALA INFORBOT AI - FOTO FUTURISTIK
+  =================================================== */
+
+  headGroup = new THREE.Group();
+  headGroup.position.y = 3.15;
+  robot.add(headGroup);
+
+  /* Kepala dasar di belakang foto */
+  const headGeo =
+    new THREE.BoxGeometry(2.05,1.6,1.48);
+
+  const head =
+    new THREE.Mesh(headGeo,bodyMat);
+
+  headGroup.add(head);
+
+  /* FOTO KEPALA */
+  const headLoader = new THREE.TextureLoader();
+
+  headLoader.load(
+    "./INFORBOT_HEAD.png",
+
+    function(texture){
+
+      console.log("✅ INFORBOT_HEAD.png BERHASIL DIMUAT");
+
+      const headFotoGeo =
+        new THREE.PlaneGeometry(2.35,1.78);
+
+      const headMat =
+        new THREE.MeshBasicMaterial({
+          map:texture,
+          transparent:true,
+          side:THREE.DoubleSide,
+          depthWrite:false
+        });
+
+      headFoto =
+        new THREE.Mesh(
+          headFotoGeo,
+          headMat
+        );
+
+      headFoto.position.set(0,0.05,0.78);
+      headFoto.renderOrder = 10;
+      headGroup.add(headFoto);
+
+      console.log("✅ KEPALA SUDAH DITEMPEL KE ROBOT");
+
+      buatMulut();
+      mulaiKedipan();
+    },
+
+    undefined,
+
+    function(error){
+      console.error("❌ GAGAL MEMUAT INFORBOT_HEAD.png",error);
+    }
+  );
+
+  /* LEHER */
+
+  const neckGeo =
+    new THREE.CylinderGeometry(.35,.35,.35,32);
+
+  const neck =
+    new THREE.Mesh(neckGeo,darkMat);
+
+  neck.position.y = 2.45;
+
+  robot.add(neck);
+
+
+  /* LENGAN */
+
+  buatLengan(-1);
+  buatLengan(1);
+
+
+  animate();
+}
+
+
+function buatLengan(sisi){
+
+  const armGroup = new THREE.Group();
+
+  armGroup.position.set(
+    sisi * 1.45,
+    1.45,
+    0
+  );
+
+  robot.add(armGroup);
+
+
+  const upperGeo =
+    new THREE.BoxGeometry(.45,1.45,.55);
+
+  const armMat =
+    new THREE.MeshStandardMaterial({
+      color:0xcbd8dc,
+      metalness:.7,
+      roughness:.3
+    });
+
+  const upper =
+    new THREE.Mesh(upperGeo,armMat);
+
+  armGroup.add(upper);
+
+
+  const handGeo =
+    new THREE.SphereGeometry(.32,20,20);
+
+  const hand =
+    new THREE.Mesh(handGeo,armMat);
+
+  hand.position.y = -.9;
+
+  armGroup.add(hand);
+
+}
+
+
+function animate(){
+
+  requestAnimationFrame(animate);
+
+  waktuAnimasi += 0.016;
+
+  if(robot){
+
+    /* GERAKAN BADAN SANGAT HALUS */
+    robot.rotation.y =
+      Math.sin(waktuAnimasi * 0.5) * 0.035;
+
+    robot.position.y =
+      -1.2 +
+      Math.sin(waktuAnimasi * 1.2) * 0.025;
+
+    /* GERAKAN KEPALA */
+    if(headGroup){
+      headGroup.rotation.y =
+        Math.sin(waktuAnimasi * 0.65) * 0.045;
+
+      headGroup.rotation.x =
+        Math.sin(waktuAnimasi * 0.45) * 0.018;
+    }
+  }
+
+  animasiMulut();
+
+  renderer.render(scene,camera);
+}
+
+
+/* =====================================================
+   MULUT BERBICARA
+===================================================== */
+
+function buatMulut(){
+
+  if(mulut || !headGroup){
+    return;
+  }
+
+  const mouthGeo =
+    new THREE.PlaneGeometry(.72,.14);
+
+  const mouthMat =
+    new THREE.MeshBasicMaterial({
+      color:0x02070d,
+      transparent:true,
+      opacity:.92,
+      side:THREE.DoubleSide,
+      depthWrite:false
+    });
+
+  mulut =
+    new THREE.Mesh(
+      mouthGeo,
+      mouthMat
+    );
+
+  mulut.position.set(
+    0,
+    -.31,
+    .805
+  );
+
+  mulut.scale.y = .35;
+  mulut.renderOrder = 20;
+
+  headGroup.add(mulut);
+
+  console.log("👄 MULUT INFORBOT SIAP");
+}
+
+function mulaiMulutBerbicara(){
+  mulutBerbicara = true;
+  console.log("👄 INFORBOT MULAI BERBICARA");
+}
+
+function animasiMulut(){
+
+  if(!mulut){
+    return;
+  }
+
+  if(!mulutBerbicara){
+    mulut.scale.y = .35;
+    return;
+  }
+
+  const waktu = Date.now() * .018;
+
+  const buka =
+    .35 + Math.abs(Math.sin(waktu)) * 1.15;
+
+  mulut.scale.y = buka;
+}
+
+function berhentiMulutBerbicara(){
+
+  mulutBerbicara = false;
+
+  if(mulut){
+    mulut.scale.y = .35;
+  }
+
+  console.log("👄 INFORBOT BERHENTI BERBICARA");
+}
+
+
+/* =====================================================
+   SISTEM KEDIP OTOMATIS
+===================================================== */
+
+function mulaiKedipan(){
+
+  if(kedipTimer){
+    clearTimeout(kedipTimer);
+  }
+
+  const waktu =
+    2500 + Math.random() * 3500;
+
+  kedipTimer = setTimeout(function(){
+    kedipMata();
+    mulaiKedipan();
+  },waktu);
+}
+
+function kedipMata(){
+
+  if(!headFoto || sedangBerkedip){
+    return;
+  }
+
+  sedangBerkedip = true;
+
+  console.log("👁️ INFORBOT BERKEDIP");
+
+  const loader = new THREE.TextureLoader();
+
+  loader.load(
+    "./INFORBOT_HEAD_PEJAM.png",
+
+    function(texturePejam){
+
+      if(!headFoto){
+        sedangBerkedip = false;
+        return;
+      }
+
+      const textureLama = headFoto.material.map;
+
+      headFoto.material.map = texturePejam;
+      headFoto.material.needsUpdate = true;
+
+      setTimeout(function(){
+
+        if(!headFoto){
+          sedangBerkedip = false;
+          return;
+        }
+
+        const loaderBuka = new THREE.TextureLoader();
+
+        loaderBuka.load(
+          "./INFORBOT_HEAD.png",
+
+          function(textureBuka){
+            headFoto.material.map = textureBuka;
+            headFoto.material.needsUpdate = true;
+            sedangBerkedip = false;
+          },
+
+          undefined,
+
+          function(){
+            headFoto.material.map = textureLama;
+            headFoto.material.needsUpdate = true;
+            sedangBerkedip = false;
+          }
+        );
+
+      },180);
+    },
+
+    undefined,
+
+    function(error){
+      console.log("⚠️ Gagal memuat INFORBOT_HEAD_PEJAM.png",error);
+      sedangBerkedip = false;
+    }
+  );
+}
+
+
+/* =====================================================
+   RESIZE
+===================================================== */
+
+window.addEventListener(
+  "resize",
+  function(){
+
+    if(!camera || !renderer) return;
+
+    camera.aspect =
+      window.innerWidth /
+      window.innerHeight;
+
+    camera.updateProjectionMatrix();
+
+    renderer.setSize(
+      window.innerWidth,
+      window.innerHeight
+    );
+
+  }
+);
+
+
+/* =====================================================
+   ROBOT BICARA
+===================================================== */
+
+function bicara(teks){
+
+  teks = String(teks || "");
+
+  if(!teks){
+    return;
+  }
+
+  if(!("speechSynthesis" in window)){
+    statusEl.innerText =
+      "Browser tidak mendukung suara.";
+    return;
+  }
+
+  window.speechSynthesis.cancel();
+
+  berhentiMulutBerbicara();
+
+  const suara =
+    new SpeechSynthesisUtterance(teks);
+
+  suara.lang = "id-ID";
+  suara.rate = .95;
+  suara.pitch = 1;
+  suara.volume = 1;
+
+  suara.onstart = function(){
+    statusEl.innerText =
+      "🔊 INFORBOT SEDANG BERBICARA";
+    mulaiMulutBerbicara();
+  };
+
+  suara.onend = function(){
+    berhentiMulutBerbicara();
+    statusEl.innerText =
+      "SIAP MEMBANTU";
+  };
+
+  suara.onerror = function(event){
+    console.log("Speech error:",event.error);
+    berhentiMulutBerbicara();
+    statusEl.innerText =
+      "SIAP MEMBANTU";
+  };
+
+  window.speechSynthesis.speak(suara);
+}
+
+
+/* =====================================================
+   SAPA ROBOT
+===================================================== */
+
+helloBtn.addEventListener(
+  "click",
+  function(){
+
+    const teks =
+      "Halo! Saya INFORBOT AI. Saya siap membantu kamu belajar Informatika, kecerdasan buatan, dan teknologi.";
+
+    pertanyaanEl.innerText =
+      "Pertanyaan: Sapaan";
+
+    jawabanEl.innerText = teks;
+
+    bicara(teks);
+
+  }
+);
+
+
+/* =====================================================
+   KIRIM PERTANYAAN KE APPS SCRIPT
+   MENGGUNAKAN JSONP
+===================================================== */
+
+function kirimPertanyaan(teks, selesai){
+
+  const script =
+    document.createElement("script");
+
+  const callbackName =
+    "inforbotCallback_" +
+    Date.now() +
+    "_" +
+    Math.floor(Math.random()*10000);
+
+
+  let sudahSelesai = false;
+
+
+  function bersihkan(){
+
+    if(sudahSelesai) return;
+
+    sudahSelesai = true;
+
+    if(window[callbackName]){
+      delete window[callbackName];
+    }
+
+    if(script.parentNode){
+      script.parentNode.removeChild(script);
+    }
+
+  }
+
+
+  window[callbackName] =
+    function(data){
+
+      let jawaban =
+        "Maaf, INFORBOT belum mendapatkan jawaban dari server.";
+
+      if(
+        data &&
+        data.success &&
+        data.jawaban
+      ){
+
+        jawaban =
+          String(data.jawaban);
+
+      }
+
+      selesai(jawaban);
+
+      bersihkan();
+
+    };
+
+
+  script.onerror =
+    function(){
+
+      selesai(
+        "Koneksi ke otak INFORBOT belum berhasil. Periksa deployment Apps Script V3.0."
+      );
+
+      bersihkan();
+
+    };
+
+
+  const url =
+    APPS_SCRIPT_URL +
+    "?action=ask" +
+    "&q=" +
+    encodeURIComponent(teks) +
+    "&callback=" +
+    callbackName;
+
+
+  script.src = url;
+
+  document.body.appendChild(script);
+
+}
+
+
+/* =====================================================
+   SPEECH RECOGNITION
+===================================================== */
+
+let recognition = null;
+let sedangMendengar = false;
+
+
+const SpeechRecognition =
+  window.SpeechRecognition ||
+  window.webkitSpeechRecognition;
+
+
+if(SpeechRecognition){
+
+  recognition =
+    new SpeechRecognition();
+
+  recognition.lang = "id-ID";
+
+  recognition.continuous = false;
+
+  recognition.interimResults = false;
+
+  recognition.maxAlternatives = 1;
+
+
+  recognition.onstart =
+    function(){
+
+      sedangMendengar = true;
+
+      micBtn.innerText =
+        "⏹ Berhenti";
+
+      statusEl.innerText =
+        "🎤 SAYA SEDANG MENDENGARKAN...";
+
+    };
+
+
+  recognition.onresult =
+    function(event){
+
+      const teks =
+        event.results[0][0].transcript.trim();
+
+
+      if(!teks) return;
+
+
+      pertanyaanEl.innerText =
+        "Pertanyaan: " + teks;
+
+      jawabanEl.innerText =
+        "⏳ INFORBOT sedang berpikir...";
+
+      statusEl.innerText =
+        "🧠 INFORBOT SEDANG BERPIKIR";
+
+
+      kirimPertanyaan(
+        teks,
+        function(jawaban){
+
+          jawabanEl.innerText =
+            jawaban;
+
+          bicara(jawaban);
+
+        }
+      );
+
+    };
+
+
+  recognition.onerror =
+    function(event){
+
+      console.log(
+        "Speech error:",
+        event.error
+      );
+
+
+      if(event.error === "not-allowed"){
+
+        jawabanEl.innerText =
+          "Izin mikrofon ditolak. Silakan izinkan mikrofon pada browser.";
+
+      }
+      else if(event.error === "no-speech"){
+
+        jawabanEl.innerText =
+          "Saya belum mendengar suara. Silakan coba lagi.";
+
+      }
+      else{
+
+        jawabanEl.innerText =
+          "Terjadi masalah pada mikrofon: " +
+          event.error;
+
+      }
+
+      statusEl.innerText =
+        "SIAP MEMBANTU";
+
+    };
+
+
+  recognition.onend =
+    function(){
+
+      sedangMendengar = false;
+
+      micBtn.innerText =
+        "🎤 Mulai Bicara";
+
+      if(
+        statusEl.innerText ===
+        "🎤 SAYA SEDANG MENDENGARKAN..."
+      ){
+
+        statusEl.innerText =
+          "SIAP MEMBANTU";
+
+      }
+
+    };
+
+
+}
+else{
+
+  micBtn.disabled = true;
+
+  statusEl.innerText =
+    "Browser tidak mendukung Speech Recognition";
+
+}
+
+
+/* =====================================================
+   TOMBOL MIKROFON
+===================================================== */
+
+micBtn.addEventListener(
+  "click",
+  function(){
+
+    if(!recognition){
+
+      alert(
+        "Browser ini belum mendukung pengenalan suara."
+      );
+
+      return;
+
+    }
+
+
+    if(sedangMendengar){
+
+      recognition.stop();
+
+    }
+    else{
+
+      try{
+
+        window.speechSynthesis.cancel();
+
+        recognition.start();
+
+      }
+      catch(error){
+
+        console.log(error);
+
+      }
+
+    }
+
+  }
+);
+
+/* =====================================================
+   MENU SAMPING
+===================================================== */
+
+document.querySelectorAll("#menuKiri .uiItem").forEach(function(item){
+  item.addEventListener("click",function(){
+    const topik = item.innerText.replace(/^\S+\s*/,"");
+    pertanyaanEl.innerText = "Pertanyaan: " + topik;
+    jawabanEl.innerText =
+      "Silakan ajukan pertanyaan tentang " + topik + ". Saya siap membantu.";
+    statusEl.innerText = "SIAP MEMBANTU";
+  });
+});
+
+document.querySelectorAll("#fiturKanan .uiItem").forEach(function(item){
+  item.addEventListener("click",function(){
+    const teks = item.innerText;
+    if(teks.includes("Jawab")){
+      bicara(jawabanEl.innerText);
+    }else if(teks.includes("Bicara")){
+      micBtn.click();
+    }else{
+      statusEl.innerText = "🧠 INFORBOT SIAP MEMPROSES PERTANYAAN";
+      setTimeout(function(){
+        if(!mulutBerbicara){
+          statusEl.innerText = "SIAP MEMBANTU";
+        }
+      },1400);
+    }
+  });
+});
+
+/* =====================================================
+   MULAI
+===================================================== */
+
+initThree();
+
+setTimeout(function() {
+  ambilFotoRobot();
+}, 1000);
+
+
+
+</script>
+
+</body>
+</html>
