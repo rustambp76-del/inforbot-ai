@@ -325,11 +325,6 @@ let mulut;
 
 let robotIdle = true;
 
-let kelopakKiri;
-let kelopakKanan;
-let sedangBerkedip = false;
-
-
 function initThree(){
 
   scene = new THREE.Scene();
@@ -459,16 +454,35 @@ headGroup.position.y = 3.15;
 robot.add(headGroup);
 
 
-/* FOTO KEPALA */
+/* =====================================================
+   FOTO KEPALA - SISTEM MATA TERBUKA / TERPEJAM
+===================================================== */
 
 const headLoader = new THREE.TextureLoader();
+
+let kepalaTerbuka = null;
+let kepalaTerpejam = null;
+let kepalaAktif = null;
+
+
+/* =====================================================
+   MUAT KEPALA MATA TERBUKA
+===================================================== */
 
 headLoader.load(
   "./INFORBOT_HEAD.png",
 
   function(texture){
 
-    console.log("✅ INFORBOT_HEAD.png BERHASIL DIMUAT");
+    console.log(
+      "✅ INFORBOT_HEAD.png BERHASIL DIMUAT"
+    );
+
+    kepalaTerbuka = texture;
+
+    texture.encoding =
+      THREE.sRGBEncoding;
+
 
     const headGeo =
       new THREE.PlaneGeometry(
@@ -476,45 +490,172 @@ headLoader.load(
         1.78
       );
 
+
     const headMat =
       new THREE.MeshBasicMaterial({
-        map: texture,
+        map: kepalaTerbuka,
         transparent: true,
         side: THREE.DoubleSide
       });
 
-    const headFoto =
+
+    kepalaAktif =
       new THREE.Mesh(
         headGeo,
         headMat
       );
 
-    headFoto.position.set(
+
+    kepalaAktif.position.set(
       0,
       0.05,
       0.78
     );
 
-    headGroup.add(headFoto);
 
-    console.log("✅ KEPALA SUDAH DITEMPEL KE ROBOT");
+    headGroup.add(
+      kepalaAktif
+    );
 
-    buatMataBerkedip();
+
+    console.log(
+      "✅ KEPALA SUDAH DITEMPEL KE ROBOT"
+    );
+
+
+    /* MUAT GAMBAR MATA TERPEJAM */
+
+    headLoader.load(
+      "./INFORBOT_HEAD_PEJAM.png",
+
+      function(texturePejam){
+
+        console.log(
+          "✅ INFORBOT_HEAD_PEJAM.png BERHASIL DIMUAT"
+        );
+
+        kepalaTerpejam =
+          texturePejam;
+
+        texturePejam.encoding =
+          THREE.sRGBEncoding;
+
+
+        console.log(
+          "🤖 SISTEM KEDIP INFORBOT SIAP"
+        );
+
+
+        mulaiKedipanRobot();
+
+      },
+
+      undefined,
+
+      function(error){
+
+        console.error(
+          "❌ GAGAL MEMUAT INFORBOT_HEAD_PEJAM.png",
+          error
+        );
+
+      }
+    );
+
   },
 
   function(progress){
-    console.log("Memuat kepala...", progress);
+
+    console.log(
+      "Memuat kepala...",
+      progress
+    );
+
   },
 
   function(error){
+
     console.error(
       "❌ GAGAL MEMUAT INFORBOT_HEAD.png",
       error
     );
+
   }
 );
 
 
+/* =====================================================
+   FUNGSI KEDIP ROBOT
+===================================================== */
+
+function kedipRobot(){
+
+  if(
+    !kepalaAktif ||
+    !kepalaTerbuka ||
+    !kepalaTerpejam
+  ){
+
+    return;
+
+  }
+
+
+  console.log(
+    "👁️ INFORBOT BERKEDIP"
+  );
+
+
+  /* MATA TERPEJAM */
+
+  kepalaAktif.material.map =
+    kepalaTerpejam;
+
+  kepalaAktif.material.needsUpdate =
+    true;
+
+
+  /* KEMBALI TERBUKA */
+
+  setTimeout(
+    function(){
+
+      kepalaAktif.material.map =
+        kepalaTerbuka;
+
+      kepalaAktif.material.needsUpdate =
+        true;
+
+    },
+    180
+  );
+
+}
+
+
+/* =====================================================
+   KEDIP OTOMATIS
+===================================================== */
+
+function mulaiKedipanRobot(){
+
+  const waktu =
+    2500 +
+    Math.random() * 4000;
+
+
+  setTimeout(
+    function(){
+
+      kedipRobot();
+
+      mulaiKedipanRobot();
+
+    },
+    waktu
+  );
+
+}
   
   /* LEHER */
 
