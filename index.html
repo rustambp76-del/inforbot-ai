@@ -324,7 +324,7 @@ let mataKanan;
 let mulut;
 
 let robotIdle = true;
-
+let waktuAnimasi = 0;
 function initThree(){
 
   scene = new THREE.Scene();
@@ -724,14 +724,31 @@ function animate(){
 
   requestAnimationFrame(animate);
 
+  waktuAnimasi += 0.016;
+
   if(robot){
 
+    /* GERAKAN BADAN SANGAT HALUS */
+
     robot.rotation.y =
-      Math.sin(Date.now()*0.0005)*0.05;
+      Math.sin(waktuAnimasi * 0.5) * 0.035;
 
     robot.position.y =
       -1.2 +
-      Math.sin(Date.now()*0.0015)*0.03;
+      Math.sin(waktuAnimasi * 1.2) * 0.025;
+
+
+    /* GERAKAN KEPALA */
+
+    if(headGroup){
+
+      headGroup.rotation.y =
+        Math.sin(waktuAnimasi * 0.65) * 0.045;
+
+      headGroup.rotation.x =
+        Math.sin(waktuAnimasi * 0.45) * 0.018;
+
+    }
 
   }
 
