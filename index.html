@@ -344,24 +344,53 @@ function mulaiMulutBerbicara(){
 
 }
 
-
 /* =====================================================
-   ANIMASI MULUT
+   ANIMASI MULUT INFORBOT
 ===================================================== */
 
 function animasiMulut(){
 
-  if(!mulut || !mulutBerbicara){
+  if(!mulut){
     return;
   }
 
-  const waktu = Date.now() * 0.018;
+  /*
+     Saat tidak berbicara:
+     mulut hampir tertutup.
+  */
+
+  if(!mulutBerbicara){
+
+    mulut.scale.y =
+      THREE.MathUtils.lerp(
+        mulut.scale.y,
+        0.18,
+        0.25
+      );
+
+    return;
+  }
+
+  /*
+     Saat berbicara:
+     mulut benar-benar membuka.
+  */
+
+  const waktu =
+    Date.now() * 0.025;
 
   const buka =
-    0.35 +
-    Math.abs(Math.sin(waktu)) * 0.9;
+    0.18 +
+    Math.abs(
+      Math.sin(waktu)
+    ) * 0.65;
 
-  mulut.scale.y = buka;
+  mulut.scale.y =
+    THREE.MathUtils.lerp(
+      mulut.scale.y,
+      buka,
+      0.45
+    );
 
 }
 
@@ -636,7 +665,7 @@ function initThree(){
 }
 
 /* =====================================================
-   MULUT INFORBOT
+   MULUT INFORBOT - VERSI BARU
 ===================================================== */
 
 function buatMulut(){
@@ -646,23 +675,29 @@ function buatMulut(){
     return;
   }
 
+  /* Hapus mulut lama jika ada */
+  if(mulut){
+    headGroup.remove(mulut);
+    mulut = null;
+  }
+
   /*
-     Mulut transparan berada di depan foto kepala.
-     Kita buat sangat tipis agar tidak terlihat seperti
-     kotak ketika robot sedang diam.
+     Bentuk mulut menggunakan lingkaran.
+     Ketika scale.y berubah, lingkaran akan
+     terlihat seperti mulut membuka dan menutup.
   */
 
   const mulutGeo =
-    new THREE.PlaneGeometry(
-      0.42,
-      0.16
+    new THREE.CircleGeometry(
+      0.18,
+      32
     );
 
   const mulutMat =
     new THREE.MeshBasicMaterial({
-      color:0x111111,
+      color:0x080808,
       transparent:true,
-      opacity:0.05,
+      opacity:0.95,
       side:THREE.DoubleSide,
       depthWrite:false
     });
@@ -674,24 +709,39 @@ function buatMulut(){
     );
 
   /*
-     POSISI MULUT
-     Nilai ini nanti bisa kita sesuaikan
-     berdasarkan posisi mulut pada foto.
+     POSISI MULUT PADA WAJAH
+     
+     Foto kepala:
+     ukuran = 2.35 x 1.78
+     
+     Mulut wajah berada lebih rendah,
+     sehingga Y kita turunkan.
   */
 
   mulut.position.set(
     0,
-    -0.22,
-    0.805
+    -0.43,
+    0.815
   );
 
-  mulut.scale.y = 0.35;
+  /*
+     Bentuk awal:
+     tipis seperti mulut tertutup.
+  */
+
+  mulut.scale.set(
+    1.35,
+    0.18,
+    1
+  );
 
   mulut.renderOrder = 20;
 
   headGroup.add(mulut);
 
-  console.log("👄 OBJEK MULUT INFORBOT BERHASIL DIBUAT");
+  console.log(
+    "👄 MULUT INFORBOT BERHASIL DIBUAT"
+  );
 
 }
   
@@ -1336,11 +1386,6 @@ document.querySelectorAll("#fiturKanan .uiItem").forEach(function(item){
 ===================================================== */
 
 initThree();
-
-setTimeout(function() {
-  ambilFotoRobot();
-}, 1000);
-
 
 
 </script>
