@@ -325,8 +325,9 @@ let mulut;
 
 let robotIdle = true;
 let mulutBerbicara = false;
-let animasiMulut = null;
 let waktuAnimasi = 0;
+let animasiMulut = null;
+
 function initThree(){
 
   scene = new THREE.Scene();
@@ -760,37 +761,24 @@ function mulaiMulutBerbicara(){
 }
 
 
+  animate();
+ 
+}
+
 /* =====================================================
-   ANIMASI MULUT
+   SISTEM MULUT INFORBOT
 ===================================================== */
 
-function animasiMulut(){
+function mulaiMulutBerbicara(){
 
-  if(
-    !mulut ||
-    !mulutBerbicara
-  ){
-    return;
-  }
+  mulutBerbicara = true;
 
-  const waktu =
-    Date.now() * 0.018;
-
-  const buka =
-    0.35 +
-    Math.abs(
-      Math.sin(waktu)
-    ) * 0.9;
-
-  mulut.scale.y =
-    buka;
+  console.log(
+    "👄 INFORBOT MULAI BERBICARA"
+  );
 
 }
 
-
-/* =====================================================
-   BERHENTI MULUT
-===================================================== */
 
 function berhentiMulutBerbicara(){
 
@@ -798,8 +786,7 @@ function berhentiMulutBerbicara(){
 
   if(mulut){
 
-    mulut.scale.y =
-      0.35;
+    mulut.scale.y = 0.35;
 
   }
 
@@ -808,10 +795,25 @@ function berhentiMulutBerbicara(){
   );
 
 }
-  animate();
- 
-}
 
+
+function animasiMulut(){
+
+  if(!mulut || !mulutBerbicara){
+    return;
+  }
+
+  const waktu =
+    Date.now() * 0.018;
+
+  const buka =
+    0.35 +
+    Math.abs(Math.sin(waktu)) * 0.9;
+
+  mulut.scale.y = buka;
+
+}
+  
 function buatLengan(sisi){
 
   const armGroup = new THREE.Group();
