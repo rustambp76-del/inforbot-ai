@@ -713,7 +713,8 @@ function initThree(){
 }
 
 /* =====================================================
-   MULUT INFORBOT
+   MULUT INFORBOT AI
+   VERSI AMAN - TANPA EllipseGeometry
 ===================================================== */
 
 function buatMulut(){
@@ -723,26 +724,65 @@ function buatMulut(){
     return;
   }
 
+  /* Hapus mulut lama jika ada */
   if(mulut){
     headGroup.remove(mulut);
     mulut = null;
   }
 
+
+  /* ===================================================
+     BENTUK MULUT
+     Menggunakan ShapeGeometry karena
+     THREE.EllipseGeometry tidak tersedia.
+  =================================================== */
+
+  const shape = new THREE.Shape();
+
+  shape.moveTo(-0.22,0);
+
+  shape.bezierCurveTo(
+    -0.12,-0.10,
+     0.12,-0.10,
+     0.22,0
+  );
+
+  shape.bezierCurveTo(
+     0.12,0.10,
+    -0.12,0.10,
+    -0.22,0
+  );
+
+  shape.closePath();
+
+
   const mulutGeo =
-    new THREE.EllipseGeometry(
-      0.16,
-      0.055,
-      32
-    );
+    new THREE.ShapeGeometry(shape);
+
+
+  /* ===================================================
+     MATERIAL MULUT
+  =================================================== */
 
   const mulutMat =
     new THREE.MeshBasicMaterial({
+
       color:0x050505,
+
       transparent:true,
-      opacity:0.90,
+
+      opacity:0.85,
+
       side:THREE.DoubleSide,
+
       depthWrite:false
+
     });
+
+
+  /* ===================================================
+     OBJEK MULUT
+  =================================================== */
 
   mulut =
     new THREE.Mesh(
@@ -750,33 +790,39 @@ function buatMulut(){
       mulutMat
     );
 
-  /*
-     POSISI MULUT ASLI PADA FOTO
-  */
+
+  /* ===================================================
+     POSISI MULUT
+     
+     NANTI BISA KITA SESUAIKAN DENGAN FOTO
+  =================================================== */
 
   mulut.position.set(
     0,
-    -0.30,
-    0.815
+    -0.22,
+    0.805
   );
 
-  /*
-     MULUT TERTUTUP
-  */
 
+  /* Ukuran awal */
   mulut.scale.set(
-    1.15,
+    1,
     0.35,
     1
   );
 
+
+  /* Pastikan berada di depan foto */
   mulut.renderOrder = 20;
 
+
   headGroup.add(mulut);
+
 
   console.log(
     "👄 MULUT INFORBOT BERHASIL DIBUAT"
   );
+
 }
   
 function buatLengan(sisi){
