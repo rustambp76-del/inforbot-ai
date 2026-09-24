@@ -320,9 +320,11 @@ let renderer;
 let robot;
 let headGroup;
 
+let headFoto;
+let mulut;
+
 let mataKiri;
 let mataKanan;
-let mulut;
 
 let robotIdle = true;
 let waktuAnimasi = 0;
@@ -601,7 +603,7 @@ function initThree(){
       console.log("✅ KEPALA SUDAH DITEMPEL KE ROBOT");
 
       buatMulut();
-      mulaiKedipan();
+      
     },
 
     undefined,
@@ -640,42 +642,57 @@ function initThree(){
 function buatMulut(){
 
   if(!headGroup){
+    console.error("❌ headGroup belum tersedia");
     return;
   }
 
-  const mouthGeo =
-    new THREE.SphereGeometry(
-      0.12,
-      24,
-      16
+  /*
+     Mulut transparan berada di depan foto kepala.
+     Kita buat sangat tipis agar tidak terlihat seperti
+     kotak ketika robot sedang diam.
+  */
+
+  const mulutGeo =
+    new THREE.PlaneGeometry(
+      0.42,
+      0.16
     );
 
-  const mouthMat =
+  const mulutMat =
     new THREE.MeshBasicMaterial({
-      color: 0x111111
+      color:0x111111,
+      transparent:true,
+      opacity:0.05,
+      side:THREE.DoubleSide,
+      depthWrite:false
     });
 
   mulut =
     new THREE.Mesh(
-      mouthGeo,
-      mouthMat
+      mulutGeo,
+      mulutMat
     );
+
+  /*
+     POSISI MULUT
+     Nilai ini nanti bisa kita sesuaikan
+     berdasarkan posisi mulut pada foto.
+  */
 
   mulut.position.set(
     0,
-    -0.30,
-    0.90
+    -0.22,
+    0.805
   );
 
-  mulut.scale.set(
-    1.5,
-    0.35,
-    0.15
-  );
+  mulut.scale.y = 0.35;
+
+  mulut.renderOrder = 20;
 
   headGroup.add(mulut);
 
-  console.log("👄 MULUT INFORBOT SIAP");
+  console.log("👄 OBJEK MULUT INFORBOT BERHASIL DIBUAT");
+
 }
   
 function buatLengan(sisi){
@@ -751,70 +768,93 @@ function animate(){
   renderer.render(scene,camera);
 }
 
+function animate(){
+
+  requestAnimationFrame(animate);
+
+  waktuAnimasi += 0.016;
+
+  if(robot){
+
+    /* GERAKAN BADAN SANGAT HALUS */
+    robot.rotation.y =
+      Math.sin(waktuAnimasi * 0.5) * 0.035;
+
+    robot.position.y =
+      -1.2 +
+      Math.sin(waktuAnimasi * 1.2) * 0.025;
+
+    /* GERAKAN KEPALA */
+    if(headGroup){
+
+      headGroup.rotation.y =
+        Math.sin(waktuAnimasi * 0.65) * 0.045;
+
+      headGroup.rotation.x =
+        Math.sin(waktuAnimasi * 0.45) * 0.018;
+
+    }
+
+  }
+
+  /* ANIMASI MULUT */
+  animasiMulut();
+
+  renderer.render(scene,camera);
+
+}
+
+
 /* =====================================================
    MULUT BERBICARA INFORBOT
 ===================================================== */
 
-function buatMulut(){
+function mulaiMulutBerbicara(){
 
-  if(!mulut || !headGroup){
-    return;
-  }
+  mulutBerbicara = true;
 
-  /* HAPUS MULUT LAMA JIKA ADA */
-  if(mulut.parent){
-    mulut.parent.remove(mulut);
-  }
+  console.log("👄 INFORBOT MULAI BERBICARA");
 
-  /* BENTUK MULUT OVAL, BUKAN KOTAK */
-  const mouthGeo =
-    new THREE.SphereGeometry(
-      0.16,
-      32,
-      20
-    );
-
-  const mouthMat =
-    new THREE.MeshBasicMaterial({
-      color:0x050505,
-      transparent:true,
-      opacity:0.90,
-      side:THREE.DoubleSide
-    });
-
-  mulut =
-    new THREE.Mesh(
-      mouthGeo,
-      mouthMat
-    );
-
-  /*
-     POSISI MULUT
-     Sesuaikan sedikit bila perlu
-  */
-  mulut.position.set(
-    0,
-    -0.28,
-    0.88
-  );
-
-  /*
-     BENTUK AWAL MULUT
-     Lebar dan tipis
-  */
-  mulut.scale.set(
-    1.35,
-    0.35,
-    0.12
-  );
-
-  mulut.renderOrder = 20;
-
-  headGroup.add(mulut);
-
-  console.log("👄 MULUT INFORBOT SIAP");
 }
 
+
+function berhentiMulutBerbicara(){
+
+  mulutBerbicara = false;
+
+  if(mulut){
+
+    mulut.scale.y = 0.35;
+
+  }
+
+  console.log("👄 INFORBOT BERHENTI BERBICARA");
+
+}
+
+
+/* =====================================================
+   ANIMASI MULUT
+===================================================== */
+
+function animasiMulut(){
+
+  if(!mulut || !mulutBerbicara){
+
+    return;
+
+  }
+
+  const waktu =
+    Date.now() * 0.018;
+
+  const buka =
+    0.35 +
+    Math.abs(Math.sin(waktu)) * 0.9;
+
+  mulut.scale.y = buka;
+
+}
 
 /* =====================================================
    SISTEM KEDIP OTOMATIS
@@ -837,7 +877,11 @@ function mulaiKedipan(){
 
 function kedipMata(){
 
-  if(!headFoto || sedangBerkedip){
+  if(
+    !mataKiri ||
+    !mataKanan ||
+    sedangBerkedip
+  ){
     return;
   }
 
@@ -845,60 +889,37 @@ function kedipMata(){
 
   console.log("👁️ INFORBOT BERKEDIP");
 
-  const loader = new THREE.TextureLoader();
+  /* TUTUP MATA */
+  mataKiri.scale.y = 0.08;
+  mataKanan.scale.y = 0.08;
 
-  loader.load(
-    "./INFORBOT_HEAD_PEJAM.png",
+  setTimeout(function(){
 
-    function(texturePejam){
+    /* BUKA MATA */
+    mataKiri.scale.y = 1;
+    mataKanan.scale.y = 1;
 
-      if(!headFoto){
-        sedangBerkedip = false;
-        return;
-      }
+    sedangBerkedip = false;
 
-      const textureLama = headFoto.material.map;
+  }, 120);
 
-      headFoto.material.map = texturePejam;
-      headFoto.material.needsUpdate = true;
+}
 
-      setTimeout(function(){
 
-        if(!headFoto){
-          sedangBerkedip = false;
-          return;
-        }
+/* =====================================================
+   MULAI SISTEM KEDIP
+===================================================== */
 
-        const loaderBuka = new THREE.TextureLoader();
+function mulaiSistemKedip(){
 
-        loaderBuka.load(
-          "./INFORBOT_HEAD.png",
+  if(kedipTimer){
+    clearTimeout(kedipTimer);
+  }
 
-          function(textureBuka){
-            headFoto.material.map = textureBuka;
-            headFoto.material.needsUpdate = true;
-            sedangBerkedip = false;
-          },
+  mulaiKedipan();
 
-          undefined,
+  console.log("🤖 SISTEM KEDIP INFORBOT SIAP");
 
-          function(){
-            headFoto.material.map = textureLama;
-            headFoto.material.needsUpdate = true;
-            sedangBerkedip = false;
-          }
-        );
-
-      },180);
-    },
-
-    undefined,
-
-    function(error){
-      console.log("⚠️ Gagal memuat INFORBOT_HEAD_PEJAM.png",error);
-      sedangBerkedip = false;
-    }
-  );
 }
 
 
