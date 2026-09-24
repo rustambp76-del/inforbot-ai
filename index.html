@@ -420,46 +420,43 @@ function mulaiMulutBerbicara(){
 function animasiMulut(){
 
   if(!mulut){
+
     return;
+
   }
 
-  /*
-     Saat tidak berbicara:
-     mulut hampir tertutup.
-  */
+
+  /* ================================================
+     SAAT TIDAK BERBICARA
+  ================================================ */
 
   if(!mulutBerbicara){
 
-    mulut.scale.y =
-      THREE.MathUtils.lerp(
-        mulut.scale.y,
-        0.18,
-        0.25
-      );
+    mulut.scale.y +=
+      (0.22 - mulut.scale.y) * 0.25;
 
     return;
+
   }
 
-  /*
-     Saat berbicara:
-     mulut benar-benar membuka.
-  */
+
+  /* ================================================
+     SAAT BERBICARA
+  ================================================ */
 
   const waktu =
-    Date.now() * 0.025;
+    performance.now() * 0.012;
+
 
   const buka =
-    0.18 +
+    0.25 +
     Math.abs(
       Math.sin(waktu)
-    ) * 0.65;
+    ) * 1.35;
 
-  mulut.scale.y =
-    THREE.MathUtils.lerp(
-      mulut.scale.y,
-      buka,
-      0.45
-    );
+
+  mulut.scale.y +=
+    (buka - mulut.scale.y) * 0.45;
 
 }
 
@@ -474,7 +471,7 @@ function berhentiMulutBerbicara(){
 
   if(mulut){
 
-    mulut.scale.y = 0.35;
+    mulut.scale.y = 0.22;
 
   }
 
@@ -807,56 +804,35 @@ mulaiSistemKedip();
 }
 
 /* =====================================================
-   MULUT INFORBOT AI
-   VERSI AMAN - TANPA EllipseGeometry
+   MULUT INFORBOT
 ===================================================== */
 
 function buatMulut(){
 
   if(!headGroup){
-    console.error("❌ headGroup belum tersedia");
+
+    console.error(
+      "❌ headGroup belum tersedia"
+    );
+
     return;
   }
 
-  /* Hapus mulut lama jika ada */
-  if(mulut){
-    headGroup.remove(mulut);
-    mulut = null;
-  }
 
-
-  /* ===================================================
-     BENTUK MULUT
-     Menggunakan ShapeGeometry karena
-     THREE.EllipseGeometry tidak tersedia.
-  =================================================== */
-
-  const shape = new THREE.Shape();
-
-  shape.moveTo(-0.22,0);
-
-  shape.bezierCurveTo(
-    -0.12,-0.10,
-     0.12,-0.10,
-     0.22,0
-  );
-
-  shape.bezierCurveTo(
-     0.12,0.10,
-    -0.12,0.10,
-    -0.22,0
-  );
-
-  shape.closePath();
-
+  /* =================================================
+     GEOMETRI MULUT
+  ================================================= */
 
   const mulutGeo =
-    new THREE.ShapeGeometry(shape);
+    new THREE.PlaneGeometry(
+      0.34,
+      0.13
+    );
 
 
-  /* ===================================================
+  /* =================================================
      MATERIAL MULUT
-  =================================================== */
+  ================================================= */
 
   const mulutMat =
     new THREE.MeshBasicMaterial({
@@ -865,7 +841,7 @@ function buatMulut(){
 
       transparent:true,
 
-      opacity:0.65,
+      opacity:0.88,
 
       side:THREE.DoubleSide,
 
@@ -874,9 +850,9 @@ function buatMulut(){
     });
 
 
-  /* ===================================================
+  /* =================================================
      OBJEK MULUT
-  =================================================== */
+  ================================================= */
 
   mulut =
     new THREE.Mesh(
@@ -885,27 +861,37 @@ function buatMulut(){
     );
 
 
-  /* ===================================================
+  /* =================================================
      POSISI MULUT
-     
-     NANTI BISA KITA SESUAIKAN DENGAN FOTO
-  =================================================== */
+  ================================================= */
 
   mulut.position.set(
-  0,
-  -0.24,
-  0.805
-);
 
-mulut.scale.set(
-  0.55,
-  0.22,
-  1
-);
+    0,
+
+    -0.22,
+
+    0.815
+
+  );
 
 
-  /* Pastikan berada di depan foto */
-  mulut.renderOrder = 20;
+  /* =================================================
+     UKURAN AWAL
+  ================================================= */
+
+  mulut.scale.set(
+
+    1,
+
+    0.25,
+
+    1
+
+  );
+
+
+  mulut.renderOrder = 30;
 
 
   headGroup.add(mulut);
@@ -1056,42 +1042,50 @@ function berhentiMulutBerbicara(){
 
 
 /* =====================================================
-   ANIMASI MULUT
+   ANIMASI MULUT INFORBOT
 ===================================================== */
 
 function animasiMulut(){
 
   if(!mulut){
+
     return;
+
   }
+
+
+  /* ================================================
+     SAAT TIDAK BERBICARA
+  ================================================ */
 
   if(!mulutBerbicara){
 
-    mulut.scale.y =
-      THREE.MathUtils.lerp(
-        mulut.scale.y,
-        0.35,
-        0.25
-      );
+    mulut.scale.y +=
+      (0.22 - mulut.scale.y) * 0.25;
 
     return;
+
   }
 
+
+  /* ================================================
+     SAAT BERBICARA
+  ================================================ */
+
   const waktu =
-    Date.now() * 0.025;
+    performance.now() * 0.012;
+
 
   const buka =
-    0.35 +
+    0.25 +
     Math.abs(
       Math.sin(waktu)
-    ) * 1.15;
+    ) * 1.35;
 
-  mulut.scale.y =
-    THREE.MathUtils.lerp(
-      mulut.scale.y,
-      buka,
-      0.40
-    );
+
+  mulut.scale.y +=
+    (buka - mulut.scale.y) * 0.45;
+
 }
 
 
