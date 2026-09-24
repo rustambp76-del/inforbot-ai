@@ -217,15 +217,6 @@ button:disabled{
   background:#51429a;
 }
 
-#copyrightTop{
-  position:absolute;
-  left:18px;
-  top:15px;
-  z-index:20;
-  color:#66ddff;
-  font-size:12px;
-}
-
 /* =====================================================
    COPYRIGHT INFORBOT
 ===================================================== */
@@ -396,11 +387,13 @@ let renderer;
 let robot;
 let headGroup;
 
-let headFoto;
-let mulut;
-
 let mataKiri;
 let mataKanan;
+let mulut;
+
+let headFoto = null;
+let textureMataPejam = null;
+let textureMataNormal = null;
 
 let robotIdle = true;
 let waktuAnimasi = 0;
@@ -674,49 +667,122 @@ function initThree(){
 
   headGroup.add(head);
 
-  /* FOTO KEPALA */
-  const headLoader = new THREE.TextureLoader();
+  /* =====================================================
+   FOTO KEPALA INFORBOT
+===================================================== */
 
-  headLoader.load(
-    "./INFORBOT_HEAD.png",
+const headLoader = new THREE.TextureLoader();
 
-    function(texture){
+headLoader.load(
+  "./INFORBOT_HEAD.png",
 
-      console.log("✅ INFORBOT_HEAD.png BERHASIL DIMUAT");
+  function(texture){
 
-      const headFotoGeo =
-        new THREE.PlaneGeometry(2.35,1.78);
+    console.log("✅ INFORBOT_HEAD.png BERHASIL DIMUAT");
 
-      const headMat =
-        new THREE.MeshBasicMaterial({
-          map:texture,
-          transparent:true,
-          side:THREE.DoubleSide,
-          depthWrite:false
-        });
+    /* SIMPAN TEKSTUR WAJAH NORMAL */
+    textureMataNormal = texture;
 
-      headFoto =
-        new THREE.Mesh(
-          headFotoGeo,
-          headMat
+    /* GEOMETRI FOTO KEPALA */
+    const headFotoGeo =
+      new THREE.PlaneGeometry(
+        2.35,
+        1.78
+      );
+
+    /* MATERIAL FOTO */
+    const headMat =
+      new THREE.MeshBasicMaterial({
+        map: texture,
+        transparent: true,
+        side: THREE.DoubleSide,
+        depthWrite: false
+      });
+
+    /* BUAT FOTO KEPALA */
+    headFoto =
+      new THREE.Mesh(
+        headFotoGeo,
+        headMat
+      );
+
+    headFoto.position.set(
+      0,
+      0.05,
+      0.78
+    );
+
+    headFoto.renderOrder = 10;
+
+    headGroup.add(headFoto);
+
+    console.log(
+      "✅ KEPALA SUDAH DITEMPEL KE ROBOT"
+    );
+
+
+    /* =================================================
+       LOAD FOTO MATA TERPEJAM
+    ================================================= */
+
+    const loaderPejam =
+      new THREE.TextureLoader();
+
+    loaderPejam.load(
+
+      "./INFORBOT_HEAD_PEJAM.png",
+
+      function(texturePejam){
+
+        textureMataPejam =
+          texturePejam;
+
+        console.log(
+          "👁️ INFORBOT_HEAD_PEJAM.png BERHASIL DIMUAT"
         );
 
-      headFoto.position.set(0,0.05,0.78);
-      headFoto.renderOrder = 10;
-      headGroup.add(headFoto);
+      },
 
-      console.log("✅ KEPALA SUDAH DITEMPEL KE ROBOT");
+      undefined,
 
-      buatMulut();
-      
-    },
+      function(error){
 
-    undefined,
+        console.warn(
+          "⚠️ INFORBOT_HEAD_PEJAM.png TIDAK DITEMUKAN",
+          error
+        );
 
-    function(error){
-      console.error("❌ GAGAL MEMUAT INFORBOT_HEAD.png",error);
-    }
-  );
+      }
+
+    );
+
+
+    /* =================================================
+   BUAT MULUT
+================================================= */
+
+buatMulut();
+
+/* =================================================
+   MULAI KEDIP OTOMATIS
+================================================= */
+
+mulaiSistemKedip();
+
+  },
+
+  undefined,
+
+  function(error){
+
+    console.error(
+      "❌ GAGAL MEMUAT INFORBOT_HEAD.png",
+      error
+    );
+
+  }
+
+);
 
   /* LEHER */
 
@@ -1028,8 +1094,9 @@ function animasiMulut(){
     );
 }
 
+
 /* =====================================================
-   SISTEM KEDIP OTOMATIS
+   MULAI KEDIP OTOMATIS
 ===================================================== */
 
 function mulaiKedipan(){
@@ -1041,17 +1108,45 @@ function mulaiKedipan(){
   const waktu =
     2500 + Math.random() * 3500;
 
-  kedipTimer = setTimeout(function(){
-    kedipMata();
-    mulaiKedipan();
-  },waktu);
+  kedipTimer =
+    setTimeout(function(){
+
+      kedipMata();
+
+      mulaiKedipan();
+
+    },waktu);
+
 }
+
+
+/* =====================================================
+   MULAI SISTEM KEDIP
+===================================================== */
+
+function mulaiSistemKedip(){
+
+  if(kedipTimer){
+    clearTimeout(kedipTimer);
+  }
+
+  mulaiKedipan();
+
+  console.log(
+    "🤖 SISTEM KEDIP INFORBOT SIAP"
+  );
+
+}
+
+/* =====================================================
+   KEDIP MATA INFORBOT
+===================================================== */
 
 function kedipMata(){
 
   if(
-    !mataKiri ||
-    !mataKanan ||
+    !headFoto ||
+    !textureMataPejam ||
     sedangBerkedip
   ){
     return;
@@ -1059,21 +1154,42 @@ function kedipMata(){
 
   sedangBerkedip = true;
 
-  console.log("👁️ INFORBOT BERKEDIP");
+  console.log(
+    "👁️ INFORBOT BERKEDIP"
+  );
 
-  /* TUTUP MATA */
-  mataKiri.scale.y = 0.08;
-  mataKanan.scale.y = 0.08;
+
+  /* =================================================
+     TUTUP MATA
+  ================================================= */
+
+  headFoto.material.map =
+    textureMataPejam;
+
+  headFoto.material.needsUpdate =
+    true;
+
+
+  /* =================================================
+     BUKA KEMBALI
+  ================================================= */
 
   setTimeout(function(){
 
-    /* BUKA MATA */
-    mataKiri.scale.y = 1;
-    mataKanan.scale.y = 1;
+    if(!headFoto){
+      sedangBerkedip = false;
+      return;
+    }
+
+    headFoto.material.map =
+      textureMataNormal;
+
+    headFoto.material.needsUpdate =
+      true;
 
     sedangBerkedip = false;
 
-  }, 120);
+  },180);
 
 }
 
