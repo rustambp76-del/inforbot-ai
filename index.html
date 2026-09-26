@@ -866,7 +866,7 @@ mulaiSistemKedip();
 }
 
 /* =====================================================
-   MULUT INFORBOT - BENTUK OVAL
+   MULUT INFORBOT - TRANSPARAN & NATURAL
 ===================================================== */
 
 function buatMulut(){
@@ -876,60 +876,144 @@ function buatMulut(){
     return;
   }
 
-  /* Hapus mulut lama jika masih ada */
+  /* Hapus mulut lama */
   if(mulut){
+
     headGroup.remove(mulut);
+
+    if(mulut.material){
+      mulut.material.dispose();
+    }
+
     mulut = null;
   }
 
-  /*
-     CircleGeometry digunakan agar TIDAK ADA lagi
-     bidang kotak pada mulut.
-  */
 
-  const mulutGeo =
-    new THREE.CircleGeometry(
-      0.5,
-      48
-    );
+  /* =================================================
+     CANVAS TRANSPARAN UNTUK BENTUK MULUT
+  ================================================= */
 
-  const mulutMat =
+  const canvas =
+    document.createElement("canvas");
+
+  canvas.width = 256;
+  canvas.height = 128;
+
+  const ctx =
+    canvas.getContext("2d");
+
+  ctx.clearRect(
+    0,
+    0,
+    canvas.width,
+    canvas.height
+  );
+
+
+  /* =================================================
+     BENTUK MULUT
+     Bukan lingkaran / kotak.
+     Dibuat seperti bukaan bibir.
+  ================================================= */
+
+  ctx.beginPath();
+
+  ctx.moveTo(55,64);
+
+  ctx.quadraticCurveTo(
+    128,
+    38,
+    201,
+    64
+  );
+
+  ctx.quadraticCurveTo(
+    128,
+    105,
+    55,
+    64
+  );
+
+  ctx.closePath();
+
+  ctx.fillStyle =
+    "rgba(35,8,10,0.82)";
+
+  ctx.fill();
+
+
+  /* =================================================
+     TEXTURE TRANSPARAN
+  ================================================= */
+
+  const texture =
+    new THREE.CanvasTexture(canvas);
+
+  texture.needsUpdate = true;
+
+
+  const material =
     new THREE.MeshBasicMaterial({
-      color:0x090909,
+
+      map:texture,
+
       transparent:true,
-      opacity:0.88,
+
+      opacity:0.82,
+
       side:THREE.DoubleSide,
+
       depthWrite:false
     });
 
-  mulut =
-    new THREE.Mesh(
-      mulutGeo,
-      mulutMat
+
+  /* =================================================
+     BIDANG TRANSPARAN
+  ================================================= */
+
+  const geometry =
+    new THREE.PlaneGeometry(
+      0.48,
+      0.24
     );
 
-  /*
+
+  mulut =
+    new THREE.Mesh(
+      geometry,
+      material
+    );
+
+
+  /* =================================================
      POSISI MULUT
-     Sesuaikan dengan posisi bibir pada foto.
-  */
+  ================================================= */
 
   mulut.position.set(
-  0,
-  -0.12,
-  0.815
-);
+    0,
+    -0.12,
+    0.817
+  );
 
-mulut.scale.set(
-  0.20,
-  0.035,
-  1
-);
+
+  /*
+     UKURAN AWAL
+     Sangat kecil agar menyatu dengan bibir.
+  */
+
+  mulut.scale.set(
+    0.72,
+    0.28,
+    1
+  );
 
   mulut.renderOrder = 20;
 
   headGroup.add(mulut);
 
-  console.log("👄 MULUT OVAL INFORBOT BERHASIL DIBUAT");
+  console.log(
+    "👄 MULUT TRANSPARAN INFORBOT BERHASIL DIBUAT"
+  );
 
 }
   
@@ -1062,19 +1146,25 @@ function berhentiMulutBerbicara(){
   if(mulut){
 
     mulut.scale.set(
-      0.18,
-      0.045,
+      0.72,
+      0.28,
       1
     );
 
   }
+
+  console.log(
+    "👄 INFORBOT BERHENTI BERBICARA"
+  );
+
+}
 
   console.log("👄 INFORBOT BERHENTI BERBICARA");
 }
 
 
 /* =====================================================
-   ANIMASI MULUT - NATURAL
+   ANIMASI MULUT INFORBOT
 ===================================================== */
 
 function animasiMulut(){
@@ -1083,29 +1173,51 @@ function animasiMulut(){
     return;
   }
 
+
+  /* ===============================
+     SAAT TIDAK BERBICARA
+  =============================== */
+
   if(!mulutBerbicara){
 
     mulut.scale.set(
-      0.18,
-      0.045,
+      0.72,
+      0.28,
       1
     );
 
     return;
   }
 
+
+  /* ===============================
+     SAAT BERBICARA
+  =============================== */
+
   const waktu =
     Date.now() * 0.010;
 
-  const buka =
-  0.035 +
-  Math.abs(Math.sin(waktu)) * 0.085;
 
-  mulut.scale.y = buka;
+  const buka =
+    0.28 +
+    Math.abs(
+      Math.sin(waktu)
+    ) * 0.72;
+
+
+  mulut.scale.y =
+    buka;
+
+
+  /*
+     Sedikit perubahan lebar
+     agar gerakan lebih alami.
+  */
 
   mulut.scale.x =
-    0.20 +
-    Math.sin(waktu * 0.7) * 0.006;
+    0.72 +
+    Math.sin(waktu * 0.7) * 0.025;
+
 }
 
 
