@@ -914,21 +914,16 @@ function buatMulut(){
   */
 
   mulut.position.set(
-    0,
-    -0.22,
-    0.815
-  );
+  0,
+  -0.24,
+  0.815
+);
 
-  /*
-     Bentuk awal:
-     oval tipis seperti mulut tertutup.
-  */
-
-  mulut.scale.set(
-    0.52,
-    0.16,
-    1
-  );
+mulut.scale.set(
+  0.30,
+  0.08,
+  1
+);
 
   mulut.renderOrder = 20;
 
@@ -1067,9 +1062,9 @@ function berhentiMulutBerbicara(){
   if(mulut){
 
     mulut.scale.set(
-      0.52,
-      0.16,
-      1
+    0.30,
+    0.08,
+    1
     );
 
   }
@@ -1110,19 +1105,14 @@ function animasiMulut(){
     Date.now() * 0.012;
 
   const buka =
-    0.16 +
-    Math.abs(Math.sin(waktu)) * 0.55;
+  0.08 +
+  Math.abs(Math.sin(waktu)) * 0.20;
 
-  mulut.scale.y = buka;
+mulut.scale.y = buka;
 
-  /*
-     Sedikit perubahan lebar agar gerak
-     tidak terlihat seperti naik-turun saja.
-  */
-
-  mulut.scale.x =
-    0.52 +
-    Math.sin(waktu * 0.7) * 0.035;
+mulut.scale.x =
+  0.30 +
+  Math.sin(waktu * 0.7) * 0.015;
 
 }
 
