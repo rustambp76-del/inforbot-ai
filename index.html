@@ -991,7 +991,7 @@ function buatMulut(){
 
   mulut.position.set(
     0,
-    -0.12,
+    -0.08,
     0.817
   );
 
@@ -1002,9 +1002,9 @@ function buatMulut(){
   */
 
   mulut.scale.set(
-    0.72,
-    0.28,
-    1
+     0.58,
+  0.18,
+  1
   );
 
   mulut.renderOrder = 20;
@@ -1198,10 +1198,10 @@ function animasiMulut(){
 
 
   const buka =
-    0.28 +
+    0.18 +
     Math.abs(
       Math.sin(waktu)
-    ) * 0.72;
+    ) * 0.42;
 
 
   mulut.scale.y =
@@ -1214,8 +1214,8 @@ function animasiMulut(){
   */
 
   mulut.scale.x =
-    0.72 +
-    Math.sin(waktu * 0.7) * 0.025;
+    0.58 +
+    Math.sin(waktu * 0.7) * 0.015;
 
 }
 
