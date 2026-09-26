@@ -866,7 +866,7 @@ mulaiSistemKedip();
 }
 
 /* =====================================================
-   MULUT INFORBOT - VERSI BARU
+   MULUT INFORBOT
 ===================================================== */
 
 function buatMulut(){
@@ -876,33 +876,45 @@ function buatMulut(){
     return;
   }
 
-  /* Hapus mulut lama */
+
+  /* HAPUS MULUT LAMA */
+
   if(mulut){
+
     headGroup.remove(mulut);
     mulut = null;
+
   }
 
-  /*
-     Gunakan PlaneGeometry.
-     Ukuran awal dibuat cukup besar agar
-     animasi dapat terlihat jelas.
-  */
+
+  /* ===================================================
+     GEOMETRI MULUT
+  =================================================== */
 
   const mulutGeo =
     new THREE.PlaneGeometry(
-      0.42,
-      0.18
+      0.36,
+      0.14
     );
+
 
   const mulutMat =
     new THREE.MeshBasicMaterial({
+
       color:0x050505,
+
       transparent:true,
-      opacity:0.95,
+
+      opacity:0.90,
+
       side:THREE.DoubleSide,
+
       depthTest:false,
+
       depthWrite:false
+
     });
+
 
   mulut =
     new THREE.Mesh(
@@ -910,43 +922,37 @@ function buatMulut(){
       mulutMat
     );
 
-  /*
+
+  /* ===================================================
      POSISI MULUT
-     X = tengah wajah
-     Y = posisi bibir
-     Z = dibuat lebih depan dari foto
-  */
+  =================================================== */
 
   mulut.position.set(
     0,
     -0.18,
-    0.86
+    0.865
   );
 
-  /*
-     Bentuk awal:
-     lebar normal
-     tinggi kecil = mulut tertutup
-  */
+
+  /* MULUT TERTUTUP */
 
   mulut.scale.set(
     1,
-    0.12,
+    0.10,
     1
   );
 
-  /*
-     Pastikan mulut selalu berada
-     di depan tekstur wajah.
-  */
 
   mulut.renderOrder = 100;
 
+
   headGroup.add(mulut);
 
+
   console.log(
-    "👄 MULUT INFORBOT VERSI BARU BERHASIL DIBUAT"
+    "👄 MULUT INFORBOT BERHASIL DIBUAT"
   );
+
 }
   
 function buatLengan(sisi){
@@ -991,15 +997,23 @@ function buatLengan(sisi){
 }
 
 
+/* =====================================================
+   ANIMASI UTAMA INFORBOT
+===================================================== */
+
 function animate(){
 
   requestAnimationFrame(animate);
 
   waktuAnimasi += 0.016;
 
+
+  /* ===================================================
+     GERAKAN BADAN
+  =================================================== */
+
   if(robot){
 
-    /* GERAKAN BADAN SANGAT HALUS */
     robot.rotation.y =
       Math.sin(waktuAnimasi * 0.5) * 0.035;
 
@@ -1007,18 +1021,40 @@ function animate(){
       -1.2 +
       Math.sin(waktuAnimasi * 1.2) * 0.025;
 
-    /* GERAKAN KEPALA */
+
+    /* =================================================
+       GERAKAN KEPALA
+    ================================================= */
+
     if(headGroup){
+
       headGroup.rotation.y =
         Math.sin(waktuAnimasi * 0.65) * 0.045;
 
       headGroup.rotation.x =
         Math.sin(waktuAnimasi * 0.45) * 0.018;
+
     }
-  
+
+  }
+
+
+  /* ===================================================
+     ANIMASI MULUT
+  =================================================== */
+
   animasiMulut();
 
-  renderer.render(scene,camera);
+
+  /* ===================================================
+     RENDER
+  =================================================== */
+
+  renderer.render(
+    scene,
+    camera
+  );
+
 }
 
 function animate(){
@@ -1059,16 +1095,23 @@ function animate(){
 
 
 /* =====================================================
-   MULUT BERBICARA INFORBOT
+   MULAI MULUT BERBICARA
 ===================================================== */
 
 function mulaiMulutBerbicara(){
 
   mulutBerbicara = true;
 
-  console.log("👄 INFORBOT MULAI BERBICARA");
+  console.log(
+    "👄 INFORBOT MULAI BERBICARA"
+  );
 
 }
+
+
+/* =====================================================
+   BERHENTI MULUT BERBICARA
+===================================================== */
 
 function berhentiMulutBerbicara(){
 
@@ -1076,18 +1119,19 @@ function berhentiMulutBerbicara(){
 
   if(mulut){
 
-    mulut.scale.y = 0.12;
+    mulut.scale.y = 0.10;
 
   }
 
   console.log(
     "👄 INFORBOT BERHENTI BERBICARA"
   );
+
 }
 
 
 /* =====================================================
-   ANIMASI MULUT INFORBOT
+   ANIMASI MULUT
 ===================================================== */
 
 function animasiMulut(){
@@ -1096,36 +1140,37 @@ function animasiMulut(){
     return;
   }
 
-  /*
-     Saat tidak berbicara,
-     mulut tetap tertutup.
-  */
+
+  /* ===================================================
+     SAAT TIDAK BERBICARA
+  =================================================== */
 
   if(!mulutBerbicara){
 
     mulut.scale.y +=
-      (0.12 - mulut.scale.y) * 0.25;
+      (0.10 - mulut.scale.y) * 0.25;
 
     return;
+
   }
 
-  /*
-     Saat berbicara,
-     buka-tutup mulut secara cepat.
-  */
+  /* ===================================================
+     SAAT BERBICARA
+  =================================================== */
 
   const waktu =
     Date.now() * 0.014;
 
+
   const buka =
-    0.12 +
-    Math.abs(Math.sin(waktu)) * 0.95;
+    0.10 +
+    Math.abs(Math.sin(waktu)) * 0.55;
+
 
   mulut.scale.y +=
-    (buka - mulut.scale.y) * 0.45;
+    (buka - mulut.scale.y) * 0.55;
 
 }
-
 
 /* =====================================================
    MULAI KEDIP OTOMATIS
