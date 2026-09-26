@@ -915,13 +915,13 @@ function buatMulut(){
 
   mulut.position.set(
   0,
-  -0.16,
+  -0.12,
   0.815
 );
 
 mulut.scale.set(
-  0.18,
-  0.045,
+  0.20,
+  0.035,
   1
 );
 
@@ -1098,14 +1098,14 @@ function animasiMulut(){
     Date.now() * 0.010;
 
   const buka =
-    0.045 +
-    Math.abs(Math.sin(waktu)) * 0.115;
+  0.035 +
+  Math.abs(Math.sin(waktu)) * 0.085;
 
   mulut.scale.y = buka;
 
   mulut.scale.x =
-    0.18 +
-    Math.sin(waktu * 0.7) * 0.008;
+    0.20 +
+    Math.sin(waktu * 0.7) * 0.006;
 }
 
 
