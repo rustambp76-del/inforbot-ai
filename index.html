@@ -543,59 +543,6 @@ function berhentiMulutBerbicara(){
 
 
 /* =====================================================
-   ANIMASI UTAMA
-===================================================== */
-
-function animate(){
-
-  requestAnimationFrame(animate);
-
-  waktuAnimasi += 0.016;
-
-
-  /* ===============================
-     GERAKAN ROBOT
-  =============================== */
-
-  if(robot){
-
-    robot.rotation.y =
-      Math.sin(waktuAnimasi * 0.5) * 0.035;
-
-    robot.position.y =
-      -1.2 +
-      Math.sin(waktuAnimasi * 1.2) * 0.025;
-
-
-    /* ===============================
-       GERAKAN KEPALA
-    =============================== */
-
-    if(headGroup){
-
-      headGroup.rotation.y =
-        Math.sin(waktuAnimasi * 0.65) * 0.045;
-
-      headGroup.rotation.x =
-        Math.sin(waktuAnimasi * 0.45) * 0.018;
-
-    }
-
-  }
-
-
-  /* ===============================
-     ANIMASI MULUT
-  =============================== */
-
-  animasiMulut();
-
-  renderer.render(scene,camera);
-
-}
-
-
-/* =====================================================
    THREE.JS INIT
 ===================================================== */
 
@@ -695,17 +642,14 @@ function initThree(){
 console.log("🤖 BADAN KOTAK INFORBOT DIHILANGKAN");
 
 
-  /* CHEST */
+  /* =====================================================
+   CHEST DIHILANGKAN
+===================================================== */
 
-  const chestGeo =
-    new THREE.BoxGeometry(.8,.45,.08);
+// Tidak ada badan/chest kotak.
+// INFORBOT tampil sebagai kepala robot futuristik.
 
-  const chest =
-    new THREE.Mesh(chestGeo,blueMat);
-
-  chest.position.set(0,1.45,.68);
-
-  robot.add(chest);
+console.log("🤖 CHEST INFORBOT DIHILANGKAN");
 
 
   /* ===================================================
@@ -1008,67 +952,6 @@ function buatLengan(sisi){
   hand.position.y = -.9;
 
   armGroup.add(hand);
-
-}
-
-
-/* =====================================================
-   ANIMASI UTAMA INFORBOT
-===================================================== */
-
-function animate(){
-
-  requestAnimationFrame(animate);
-
-  waktuAnimasi += 0.016;
-
-
-  /* ===================================================
-     GERAKAN BADAN
-  =================================================== */
-
-  if(robot){
-
-    robot.rotation.y =
-      Math.sin(waktuAnimasi * 0.5) * 0.035;
-
-    robot.position.y =
-      -1.2 +
-      Math.sin(waktuAnimasi * 1.2) * 0.025;
-
-
-    /* =================================================
-       GERAKAN KEPALA
-    ================================================= */
-
-    if(headGroup){
-
-      headGroup.rotation.y =
-        Math.sin(waktuAnimasi * 0.65) * 0.045;
-
-      headGroup.rotation.x =
-        Math.sin(waktuAnimasi * 0.45) * 0.018;
-
-    }
-
-  }
-
-
-  /* ===================================================
-     ANIMASI MULUT
-  =================================================== */
-
-  animasiMulut();
-
-
-  /* ===================================================
-     RENDER
-  =================================================== */
-
-  renderer.render(
-    scene,
-    camera
-  );
 
 }
 
