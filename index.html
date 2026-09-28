@@ -575,35 +575,6 @@ function animasiMulut(){
 
 }
 
-  /*
-     SEDANG BERBICARA
-  */
-
-  const t =
-    performance.now() * 0.018;
-
-  const gerakan =
-    Math.abs(Math.sin(t)) *
-    0.75;
-
-  const gerakan2 =
-    Math.abs(Math.sin(t * 1.8)) *
-    0.25;
-
-  const buka =
-    0.10 +
-    gerakan +
-    gerakan2;
-
-  /*
-     BUKA MULUT LEBIH BESAR
-  */
-
-  mulut.scale.y +=
-    (buka - mulut.scale.y) * 0.55;
-
-}
-
 function mulaiKedipan(){
   if(kedipTimer)clearTimeout(kedipTimer);
   kedipTimer=setTimeout(function(){kedipMata();mulaiKedipan();},2500+Math.random()*3500);
