@@ -364,24 +364,73 @@ function muatTeksturPejam(){
   });
 }
 
+/* =====================================================
+   MULUT INFORBOT - V5 JELAS & TERLIHAT
+===================================================== */
+
 function buatMulut(){
-  if(!headGroup)return;
-  if(mulut){headGroup.remove(mulut);mulut=null;}
 
-  const shape=new THREE.Shape();
-  shape.moveTo(-.18,0);
-  shape.quadraticCurveTo(0,.055,.18,0);
-  shape.quadraticCurveTo(0,-.055,-.18,0);
-  shape.closePath();
+  if(!headGroup){
+    console.error("❌ headGroup belum tersedia");
+    return;
+  }
 
-  const geo=new THREE.ShapeGeometry(shape);
-  const mat=new THREE.MeshBasicMaterial({color:0x050505,transparent:true,opacity:.86,side:THREE.DoubleSide,depthTest:false,depthWrite:false});
-  mulut=new THREE.Mesh(geo,mat);
-  mulut.position.set(0,-.18,.87);
-  mulut.scale.set(.78,.12,1);
-  mulut.renderOrder=100;
+  if(mulut){
+    headGroup.remove(mulut);
+    mulut = null;
+  }
+
+  const mulutGeo =
+    new THREE.PlaneGeometry(
+      0.38,
+      0.22
+    );
+
+  const mulutMat =
+    new THREE.MeshBasicMaterial({
+      color:0x020202,
+      transparent:true,
+      opacity:0.95,
+      side:THREE.DoubleSide,
+      depthTest:false,
+      depthWrite:false
+    });
+
+  mulut =
+    new THREE.Mesh(
+      mulutGeo,
+      mulutMat
+    );
+
+  /*
+     POSISI MULUT
+     Kita turunkan sedikit agar tepat
+     pada area bibir foto.
+  */
+
+  mulut.position.set(
+    0,
+    -0.20,
+    0.90
+  );
+
+  /*
+     MULUT TERTUTUP
+  */
+
+  mulut.scale.set(
+    1,
+    0.10,
+    1
+  );
+
+  mulut.renderOrder = 1000;
+
   headGroup.add(mulut);
-  console.log('Mulut natural V4 siap.');
+
+  console.log(
+    "👄 MULUT INFORBOT V5 AKTIF"
+  );
 }
 
 function mulaiMulutBerbicara(){
@@ -393,18 +442,55 @@ function berhentiMulutBerbicara(){
   if(mulut)mulut.scale.y=.12;
 }
 
+/* =====================================================
+   ANIMASI MULUT V5
+===================================================== */
+
 function animasiMulut(){
-  if(!mulut)return;
-  if(!mulutBerbicara){
-    mulut.scale.y+=(.12-mulut.scale.y)*.25;
+
+  if(!mulut){
     return;
   }
-  const t=Date.now()*.012;
-  const g1=Math.abs(Math.sin(t));
-  const g2=Math.abs(Math.sin(t*1.73));
-  const gerakan=(g1*.65)+(g2*.35);
-  const target=.12+gerakan*.85;
-  mulut.scale.y+=(target-mulut.scale.y)*.45;
+
+  /*
+     TIDAK BERBICARA
+  */
+
+  if(!mulutBerbicara){
+
+    mulut.scale.y +=
+      (0.10 - mulut.scale.y) * 0.30;
+
+    return;
+  }
+
+  /*
+     SEDANG BERBICARA
+  */
+
+  const t =
+    performance.now() * 0.018;
+
+  const gerakan =
+    Math.abs(Math.sin(t)) *
+    0.75;
+
+  const gerakan2 =
+    Math.abs(Math.sin(t * 1.8)) *
+    0.25;
+
+  const buka =
+    0.10 +
+    gerakan +
+    gerakan2;
+
+  /*
+     BUKA MULUT LEBIH BESAR
+  */
+
+  mulut.scale.y +=
+    (buka - mulut.scale.y) * 0.55;
+
 }
 
 function mulaiKedipan(){
