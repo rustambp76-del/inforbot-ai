@@ -365,7 +365,7 @@ function muatTeksturPejam(){
 }
 
 /* =====================================================
-   MULUT INFORBOT - V6 NATURAL & JELAS
+   MULUT INFORBOT - V7 NATURAL
 ===================================================== */
 
 function buatMulut(){
@@ -375,31 +375,38 @@ function buatMulut(){
     return;
   }
 
-  /* Hapus mulut lama */
+  /* HAPUS MULUT LAMA */
   if(mulut){
 
     headGroup.remove(mulut);
-    mulut.geometry.dispose();
-    mulut.material.dispose();
+
+    if(mulut.geometry){
+      mulut.geometry.dispose();
+    }
+
+    if(mulut.material){
+      mulut.material.dispose();
+    }
 
     mulut = null;
   }
 
-  /*
-     BENTUK MULUT OVAL
-     Bukan kotak/persegi panjang.
-  */
+
+  /* =================================================
+     BENTUK MULUT
+  ================================================= */
 
   const mulutGeo =
     new THREE.CircleGeometry(
-      0.24,
-      48
+      0.16,
+      64
     );
+
 
   const mulutMat =
     new THREE.MeshBasicMaterial({
 
-      color:0x050505,
+      color:0x030303,
 
       transparent:true,
 
@@ -413,45 +420,50 @@ function buatMulut(){
 
     });
 
+
   mulut =
     new THREE.Mesh(
       mulutGeo,
       mulutMat
     );
 
-  /*
+
+  /* =================================================
      POSISI MULUT
-     Disesuaikan dengan wajah INFORBOT.
-  */
+  ================================================= */
 
   mulut.position.set(
     0,
     -0.20,
-    0.90
+    0.91
   );
 
-  /*
-     BENTUK AWAL:
-     sangat tipis = mulut tertutup
-  */
+
+  /* =================================================
+     BENTUK MULUT TERTUTUP
+  ================================================= */
 
   mulut.scale.set(
     1.25,
-    0.10,
+    0.08,
     1
   );
 
+
   /*
-     Pastikan selalu di depan wajah.
+     SELALU DI DEPAN FOTO WAJAH
   */
 
   mulut.renderOrder = 1000;
 
+
   headGroup.add(mulut);
 
+
   console.log(
-    "👄 MULUT INFORBOT V6 BERHASIL DIBUAT"
+    "👄 MULUT INFORBOT V7 AKTIF"
   );
+
 }
 
 
@@ -466,6 +478,7 @@ function mulaiMulutBerbicara(){
   console.log(
     "👄 INFORBOT MULAI BERBICARA"
   );
+
 }
 
 
@@ -480,18 +493,19 @@ function berhentiMulutBerbicara(){
   if(mulut){
 
     mulut.scale.y =
-      0.10;
+      0.08;
 
   }
 
   console.log(
     "👄 INFORBOT BERHENTI BERBICARA"
   );
+
 }
 
 
 /* =====================================================
-   ANIMASI MULUT V6
+   ANIMASI MULUT V7
 ===================================================== */
 
 function animasiMulut(){
@@ -502,70 +516,31 @@ function animasiMulut(){
 
 
   /* =================================================
-     SAAT TIDAK BERBICARA
+     MULUT DIAM
   ================================================= */
 
   if(!mulutBerbicara){
 
     mulut.scale.y +=
-      (0.10 - mulut.scale.y) * 0.30;
+      (0.08 - mulut.scale.y) * 0.30;
 
     return;
   }
 
-    /* =================================================
-     SAAT BERBICARA
-  ================================================= */
 
-  const waktu =
-    performance.now() * 0.012;
-
-  const gerakan1 =
-    Math.abs(
-      Math.sin(waktu)
-    );
-
-  const gerakan2 =
-    Math.abs(
-      Math.sin(waktu * 1.73)
-    );
-
-  const gerakan =
-    (gerakan1 * 0.65) +
-    (gerakan2 * 0.35);
-
-  /*
-     0.10 = tertutup
-     0.35 = sedikit terbuka
-     0.70 = terbuka
-     1.00 = terbuka lebar
-  */
-
-  const target =
-    0.10 +
-    gerakan * 0.95;
-
-  /*
-     Gerakan mulut dibuat responsif
-  */
-
-  mulut.scale.y +=
-    (target - mulut.scale.y) * 0.55;
-
-}
   /* =================================================
-     SAAT BERBICARA
+     GERAKAN MULUT SAAT BERBICARA
   ================================================= */
 
   const waktu =
-    performance.now() * 0.012;
+    performance.now() * 0.015;
 
 
   /*
      GERAKAN UTAMA
   */
 
-  const gerakan1 =
+  const gelombang1 =
     Math.abs(
       Math.sin(waktu)
     );
@@ -573,47 +548,57 @@ function animasiMulut(){
 
   /*
      GERAKAN KEDUA
-     Membuat gerakan tidak monoton.
+     Membuat pola lebih alami.
   */
 
-  const gerakan2 =
+  const gelombang2 =
     Math.abs(
-      Math.sin(waktu * 1.73)
+      Math.sin(waktu * 1.67)
     );
 
 
   /*
-     Gabungkan dua gerakan.
+     CAMPURAN GERAKAN
   */
 
   const gerakan =
-    (gerakan1 * 0.65) +
-    (gerakan2 * 0.35);
+    (gelombang1 * 0.70) +
+    (gelombang2 * 0.30);
+
+
+  /* =================================================
+     TINGGI BUKAAN
+  ================================================= */
+
+  const targetY =
+    0.08 +
+    gerakan * 0.62;
 
 
   /*
-     BUKA MULUT
+     LEBAR MULUT JUGA SEDIKIT BERUBAH
 
-     0.10 = tertutup
-     0.35 = sedikit terbuka
-     0.70 = terbuka
-     1.00 = terbuka lebar
+     Ketika membuka:
+     sedikit lebih lebar.
   */
 
-  const target =
-    0.10 +
-    gerakan * 0.95;
+  const targetX =
+    1.25 +
+    gerakan * 0.18;
 
 
-  /*
-     Gerakan dibuat lebih responsif.
-  */
+  /* =================================================
+     ANIMASI HALUS
+  ================================================= */
 
   mulut.scale.y +=
-    (target - mulut.scale.y) * 0.55;
+    (targetY - mulut.scale.y) * 0.50;
+
+
+  mulut.scale.x +=
+    (targetX - mulut.scale.x) * 0.35;
 
 }
-
 function mulaiKedipan(){
   if(kedipTimer)clearTimeout(kedipTimer);
   kedipTimer=setTimeout(function(){kedipMata();mulaiKedipan();},2500+Math.random()*3500);
