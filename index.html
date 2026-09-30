@@ -637,91 +637,6 @@ function berhentiMulutBerbicara(){
 
 }
 
-
-  /* =================================================
-     MULUT DIAM
-  ================================================= */
-
-  if(!mulutBerbicara){
-
-    mulut.scale.y +=
-      (0.08 - mulut.scale.y) * 0.30;
-
-    return;
-  }
-
-
-  /* =================================================
-     GERAKAN MULUT SAAT BERBICARA
-  ================================================= */
-
-  const waktu =
-    performance.now() * 0.015;
-
-
-  /*
-     GERAKAN UTAMA
-  */
-
-  const gelombang1 =
-    Math.abs(
-      Math.sin(waktu)
-    );
-
-
-  /*
-     GERAKAN KEDUA
-     Membuat pola lebih alami.
-  */
-
-  const gelombang2 =
-    Math.abs(
-      Math.sin(waktu * 1.67)
-    );
-
-
-  /*
-     CAMPURAN GERAKAN
-  */
-
-  const gerakan =
-    (gelombang1 * 0.70) +
-    (gelombang2 * 0.30);
-
-
-  /* =================================================
-     TINGGI BUKAAN
-  ================================================= */
-
-  const targetY =
-    0.08 +
-    gerakan * 0.62;
-
-
-  /*
-     LEBAR MULUT JUGA SEDIKIT BERUBAH
-
-     Ketika membuka:
-     sedikit lebih lebar.
-  */
-
-  const targetX =
-    1.25 +
-    gerakan * 0.18;
-
-
-  /* =================================================
-     ANIMASI HALUS
-  ================================================= */
-
-  mulut.scale.y +=
-    (targetY - mulut.scale.y) * 0.50;
-
-
-  mulut.scale.x +=
-    (targetX - mulut.scale.x) * 0.35;
-
-}
 function mulaiKedipan(){
   if(kedipTimer)clearTimeout(kedipTimer);
   kedipTimer=setTimeout(function(){kedipMata();mulaiKedipan();},2500+Math.random()*3500);
@@ -1262,40 +1177,6 @@ micBtn.addEventListener(
 
   }
 );
-
-/* =====================================================
-   FALLBACK FOTO DARI APPS SCRIPT
-===================================================== */
-
-function ambilFotoRobot(){
-  const script=document.createElement('script');
-  const callbackName='fotoRobotCallback_'+Date.now();
-
-  window[callbackName]=function(data){
-    if(data&&data.success&&data.data){
-      const loader=new THREE.TextureLoader();
-      loader.load(data.data,function(texture){
-        pasangTeksturWajah(texture);
-        muatTeksturPejam();
-        buatMulut();
-        mulaiSistemKedip();
-      });
-    }else{
-      console.warn('Foto fallback tidak tersedia.');
-    }
-    delete window[callbackName];
-    if(script.parentNode)script.parentNode.removeChild(script);
-  };
-
-  script.onerror=function(){
-    console.warn('Gagal mengambil foto fallback.');
-    delete window[callbackName];
-    if(script.parentNode)script.parentNode.removeChild(script);
-  };
-
-  script.src=APPS_SCRIPT_URL+'?action=foto&callback='+callbackName;
-  document.body.appendChild(script);
-}
 
 /* =====================================================
    MULAI
