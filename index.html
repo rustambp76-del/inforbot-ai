@@ -315,6 +315,26 @@ let faseMulutV91 = 0;
 let sedangBerkedipV9 = false;
 let kedipTimerV9 = null;
 
+// ========================================
+// INFORBOT AI V10 - FACE LAYER SYSTEM
+// ========================================
+
+let faceLayerV10 = null;
+let mataLayerV10 = null;
+let mulutLayerV10 = null;
+
+let mataTerbukaV10 = null;
+let mataTertutupV10 = null;
+
+let mulutDiamV10 = null;
+let mulutTerbukaV10 = null;
+
+let mataBerkedipV10 = false;
+let mulutBerbicaraV10 = false;
+
+let timerKedipV10 = null;
+let waktuMulutV10 = 0;
+
 function initThree(){
   scene=new THREE.Scene();
   scene.background=null;
@@ -528,6 +548,34 @@ function pasangWajahV91(){
 
 }
 
+// ========================================
+// V10 - MEMBUAT LAYER WAJAH
+// ========================================
+
+function buatFaceLayerV10() {
+
+  if (!headGroup) {
+    console.log("V10: headGroup belum tersedia");
+    return;
+  }
+
+  // Hapus layer V10 jika sebelumnya sudah dibuat
+  if (faceLayerV10) {
+    headGroup.remove(faceLayerV10);
+  }
+
+  faceLayerV10 = new THREE.Group();
+
+  faceLayerV10.position.set(
+    0,
+    0,
+    0.01
+  );
+
+  headGroup.add(faceLayerV10);
+
+  console.log("V10: Face Layer siap");
+}
 
 /* =====================================================
    MULUT MULAI BERBICARA V9.1
