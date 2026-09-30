@@ -365,119 +365,134 @@ function muatTeksturPejam(){
 }
 
 /* =====================================================
-   MULUT INFORBOT - V7 NATURAL
+   INFORBOT V8.1
+   ANIMASI MULUT DENGAN PERGANTIAN TEKSTUR
 ===================================================== */
 
-function buatMulut(){
+let waktuMulutV8 = 0;
+let mulutTerbukaV8 = false;
 
-  if(!headGroup){
-    console.error("❌ headGroup belum tersedia");
+function animasiMulut(){
+
+  if(!headFoto){
     return;
   }
 
-  /* HAPUS MULUT LAMA */
-  if(mulut){
+  if(!headFoto.material){
+    return;
+  }
 
-    headGroup.remove(mulut);
+  if(!teksturWajahNormalV8){
+    return;
+  }
 
-    if(mulut.geometry){
-      mulut.geometry.dispose();
-    }
-
-    if(mulut.material){
-      mulut.material.dispose();
-    }
-
-    mulut = null;
+  if(!teksturMulutTerbukaV8){
+    return;
   }
 
 
   /* =================================================
-     BENTUK MULUT
+     TIDAK SEDANG BERBICARA
   ================================================= */
 
-  const mulutGeo =
-    new THREE.CircleGeometry(
-      0.16,
-      64
-    );
+  if(!mulutSedangBerbicaraV8){
 
+    if(
+      headFoto.material.map !==
+      teksturWajahNormalV8
+    ){
 
-  const mulutMat =
-    new THREE.MeshBasicMaterial({
+      headFoto.material.map =
+        teksturWajahNormalV8;
 
-      color:0x030303,
+      headFoto.material.needsUpdate =
+        true;
 
-      transparent:true,
+    }
 
-      opacity:0.92,
+    mulutTerbukaV8 = false;
 
-      side:THREE.DoubleSide,
-
-      depthTest:false,
-
-      depthWrite:false
-
-    });
-
-
-  mulut =
-    new THREE.Mesh(
-      mulutGeo,
-      mulutMat
-    );
+    return;
+  }
 
 
   /* =================================================
-     POSISI MULUT
+     SEDANG BERBICARA
   ================================================= */
 
-  mulut.position.set(
-    0,
-    -0.20,
-    0.91
-  );
-
-
-  /* =================================================
-     BENTUK MULUT TERTUTUP
-  ================================================= */
-
-  mulut.scale.set(
-    1.25,
-    0.08,
-    1
-  );
+  waktuMulutV8 += 0.016;
 
 
   /*
-     SELALU DI DEPAN FOTO WAJAH
+     Pergantian setiap ±0.14 detik
   */
 
-  mulut.renderOrder = 1000;
+  if(waktuMulutV8 >= 0.14){
+
+    waktuMulutV8 = 0;
+
+    mulutTerbukaV8 =
+      !mulutTerbukaV8;
 
 
-  headGroup.add(mulut);
+    if(mulutTerbukaV8){
+
+      /* ==========================================
+         MULUT TERBUKA
+      ========================================== */
+
+      headFoto.material.map =
+        teksturMulutTerbukaV8;
+
+      console.log(
+        "👄 V8.1 MULUT TERBUKA"
+      );
+
+    }
+    else{
+
+      /* ==========================================
+         MULUT TERTUTUP
+      ========================================== */
+
+      headFoto.material.map =
+        teksturWajahNormalV8;
+
+      console.log(
+        "👄 V8.1 MULUT TERTUTUP"
+      );
+
+    }
 
 
-  console.log(
-    "👄 MULUT INFORBOT V7 AKTIF"
-  );
+    headFoto.material.needsUpdate =
+      true;
+
+  }
 
 }
 
-
 /* =====================================================
-   MULAI MULUT BERBICARA
+   TEST MULUT V8
 ===================================================== */
 
-function mulaiMulutBerbicara(){
-
-  mulutBerbicara = true;
+function testMulutV8(){
 
   console.log(
-    "👄 INFORBOT MULAI BERBICARA"
+    "🧪 TEST MULUT V8 DIMULAI"
   );
+
+  mulaiMulutBerbicara();
+
+  setTimeout(function(){
+
+    berhentiMulutBerbicara();
+
+    console.log(
+      "🧪 TEST MULUT V8 SELESAI"
+    );
+
+  },5000);
 
 }
 
