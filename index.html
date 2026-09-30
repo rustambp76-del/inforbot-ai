@@ -282,8 +282,31 @@ let renderer = null;
 let robot = null;
 let headGroup = null;
 let headFoto = null;
-
 let waktuAnimasi = 0;
+
+
+/* =====================================================
+   TEKSTUR WAJAH V9.1
+===================================================== */
+
+let teksturWajahNormalV91 = null;
+let teksturMulutTerbukaV91 = null;
+let teksturMataPejamV9 = null;
+
+
+/* =====================================================
+   ANIMASI MULUT V9.1
+===================================================== */
+
+let mulutSedangBerbicaraV91 = false;
+let mulutTerbukaV91 = false;
+
+let waktuMulutV91 = 0;
+let durasiMulutV91 = 0;
+
+let faseMulutV91 = 0;
+
+
 /* =====================================================
    KEDIP MATA V9
 ===================================================== */
@@ -291,25 +314,17 @@ let waktuAnimasi = 0;
 let sedangBerkedipV9 = false;
 let kedipTimerV9 = null;
 
-// ========================================
-// INFORBOT AI V10 - FACE LAYER SYSTEM
-// ========================================
 
-let faceLayerV10 = null;
+/* =====================================================
+   INFORBOT AI V10 - MATA LAYER
+===================================================== */
+
 let mataLayerV10 = null;
-let mulutLayerV10 = null;
+let mataPejamV10 = null;
 
-let mataTerbukaV10 = null;
-let mataTertutupV10 = null;
-
-let mulutDiamV10 = null;
-let mulutTerbukaV10 = null;
-
-let mataBerkedipV10 = false;
-let mulutBerbicaraV10 = false;
-
+let sedangBerkedipV10 = false;
 let timerKedipV10 = null;
-let waktuMulutV10 = 0;
+
 
 function initThree(){
   scene=new THREE.Scene();
