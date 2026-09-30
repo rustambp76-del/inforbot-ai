@@ -314,7 +314,15 @@ let faseMulutV91 = 0;
 
 let sedangBerkedipV9 = false;
 let kedipTimerV9 = null;
+// ========================================
+// INFORBOT AI V10 - MATA LAYER
+// ========================================
 
+let mataLayerV10 = null;
+let mataPejamV10 = null;
+
+let sedangBerkedipV10 = false;
+let timerKedipV10 = null;
 // ========================================
 // INFORBOT AI V10 - FACE LAYER SYSTEM
 // ========================================
@@ -372,6 +380,11 @@ function initThree(){
   headGroup.add(new THREE.Mesh(headGeo,headMat));
 
   pasangWajahV91();
+
+  buatMataLayerV10();
+
+  mulaiKedipanV10();
+
   animate();
 }
 
@@ -969,7 +982,136 @@ function mulaiKedipanV9(){
     },jeda);
 
 }
+function mulaiKedipanV10(){
 
+  if(timerKedipV10){
+
+    clearTimeout(
+      timerKedipV10
+    );
+
+  }
+
+  /*
+     Kedip acak setiap
+     3,5 - 7 detik.
+  */
+
+  const jeda =
+    3500 +
+    Math.random() * 3500;
+
+  timerKedipV10 =
+    setTimeout(function(){
+
+      kedipMataV10();
+
+      mulaiKedipanV10();
+
+    },jeda);
+
+  console.log(
+    "👁️ V10 jadwal kedip:",
+    Math.round(jeda),
+    "ms"
+  );
+}
+/* ========================================
+   INFORBOT AI V10
+   SISTEM KEDIP MATA INDEPENDEN
+======================================== */
+
+function buatMataLayerV10(){
+
+  if(!headGroup){
+    console.log("V10: headGroup belum siap");
+    return;
+  }
+
+  // Jangan membuat dua kali
+  if(mataLayerV10){
+    headGroup.remove(mataLayerV10);
+    mataLayerV10 = null;
+  }
+
+  mataLayerV10 = new THREE.Group();
+
+  /*
+     Layer mata berada sedikit di depan
+     permukaan wajah.
+  */
+  mataLayerV10.position.set(
+    0,
+    0,
+    0.025
+  );
+
+  headGroup.add(mataLayerV10);
+
+  /*
+     Dua garis tipis sebagai kelopak mata.
+     Awalnya transparan.
+  */
+
+  const geo = new THREE.PlaneGeometry(
+    0.38,
+    0.055
+  );
+
+  const matKiri =
+    new THREE.MeshBasicMaterial({
+      color:0x07111c,
+      transparent:true,
+      opacity:0,
+      depthTest:false,
+      depthWrite:false
+    });
+
+  const matKanan =
+    matKiri.clone();
+
+  const kiri =
+    new THREE.Mesh(
+      geo,
+      matKiri
+    );
+
+  const kanan =
+    new THREE.Mesh(
+      geo,
+      matKanan
+    );
+
+  kiri.position.set(
+    -0.42,
+    0.18,
+    0.01
+  );
+
+  kanan.position.set(
+    0.42,
+    0.18,
+    0.01
+  );
+
+  kiri.renderOrder = 200;
+  kanan.renderOrder = 200;
+
+  mataLayerV10.add(
+    kiri,
+    kanan
+  );
+
+  mataPejamV10 = [
+    kiri,
+    kanan
+  ];
+
+  console.log(
+    "👁️ V10: Mata layer berhasil dibuat"
+  );
+}
+  
 /* SATU-SATUNYA animate() */
 function animate(){
   requestAnimationFrame(animate);
