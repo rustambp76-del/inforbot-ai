@@ -963,39 +963,7 @@ function kedipMataV9(){
 
 }
 
-function kedipMataV10(){
 
-  if(
-    sedangBerkedipV10 ||
-    !mataPejamV10
-  ){
-    return;
-  }
-
-  sedangBerkedipV10 = true;
-
-  console.log("👁️ V10 MATA MENUTUP");
-
-  mataPejamV10.forEach(function(mata){
-    mata.material.opacity = 0.95;
-  });
-
-  setTimeout(function(){
-
-    if(mataPejamV10){
-
-      mataPejamV10.forEach(function(mata){
-        mata.material.opacity = 0;
-      });
-
-    }
-
-    sedangBerkedipV10 = false;
-
-    console.log("👁️ V10 MATA TERBUKA");
-
-  },180);
-}
 /* =====================================================
    JADWAL KEDIP V9.2
 ===================================================== */
