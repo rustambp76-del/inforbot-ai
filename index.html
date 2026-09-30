@@ -272,22 +272,16 @@ const helloBtn = document.getElementById("helloBtn");
    THREE.JS - INFORBOT V4 FINAL
 ===================================================== */
 
-let scene=null;
-let camera=null;
-let renderer=null;
-let robot=null;
-let headGroup=null;
-let headFoto=null;
-let mataKiri=null;
-let mataKanan=null;
-let mulut=null;
-let mulutBerbicara=false;
-let sedangBerkedip=false;
-let kedipTimer=null;
-let waktuAnimasi=0;
-let textureMataPejam=null;
-let mataKedipKiri=null;
-let mataKedipKanan=null;
+let scene = null;
+let camera = null;
+let renderer = null;
+let robot = null;
+let headGroup = null;
+let headFoto = null;
+
+let waktuAnimasi = 0;
+
+
 /* =====================================================
    SISTEM WAJAH INFORBOT V8.2
 ===================================================== */
@@ -298,6 +292,11 @@ let teksturMulutTerbukaV8 = null;
 let mulutSedangBerbicaraV8 = false;
 let mulutTerbukaV8 = false;
 let waktuMulutV8 = 0;
+
+
+/* =====================================================
+   SISTEM KEDIP MATA
+===================================================== */
 
 let textureMataPejam = null;
 let sedangBerkedip = false;
@@ -344,16 +343,36 @@ function initThree(){
 }
 
 function muatWajahUtama(){
-  const loader=new THREE.TextureLoader();
-  loader.load('./INFORBOT_HEAD.png',function(texture){
-    pasangTeksturWajah(texture);
-    muatTeksturPejam();
-    buatMulut();
-    mulaiSistemKedip();
-  },undefined,function(){
-    console.warn('INFORBOT_HEAD.png tidak ditemukan; mencoba foto Apps Script.');
-    ambilFotoRobot();
-  });
+
+  const loader =
+    new THREE.TextureLoader();
+
+  loader.load(
+
+    "./INFORBOT_HEAD.png",
+
+    function(texture){
+
+      pasangTeksturWajah(texture);
+
+      console.log(
+        "✅ WAJAH INFORBOT BERHASIL DIMUAT"
+      );
+
+    },
+
+    undefined,
+
+    function(){
+
+      console.warn(
+        "⚠️ INFORBOT_HEAD.png tidak ditemukan."
+      );
+
+    }
+
+  );
+
 }
 
 function pasangTeksturWajah(texture){
@@ -619,17 +638,6 @@ function berhentiMulutBerbicara(){
 }
 
 
-/* =====================================================
-   ANIMASI MULUT V7
-===================================================== */
-
-function animasiMulut(){
-
-  if(!mulut){
-    return;
-  }
-
-
   /* =================================================
      MULUT DIAM
   ================================================= */
@@ -791,10 +799,6 @@ function kedipMata(){
 
 }
 
-  buatMataKedipSementara();
-  setTimeout(function(){hapusMataKedipSementara();sedangBerkedip=false;},150);
-}
-
 function buatMataKedipSementara(){
   if(!headGroup)return;
   const geo=new THREE.PlaneGeometry(.34,.045);
@@ -892,30 +896,72 @@ function bicara(teks){
     return;
   }
 
+
+  /* =================================================
+     HENTIKAN SUARA SEBELUMNYA
+  ================================================= */
+
   window.speechSynthesis.cancel();
+
+  berhentiMulutBerbicara();
+
+
+  /* =================================================
+     BUAT SUARA
+  ================================================= */
 
   const suara =
     new SpeechSynthesisUtterance(teks);
 
   suara.lang = "id-ID";
-  suara.rate = .95;
+  suara.rate = 0.95;
   suara.pitch = 1;
+
+
+  /* =================================================
+     MULAI BERBICARA
+  ================================================= */
 
   suara.onstart = function(){
 
     statusEl.innerText =
       "🔊 INFORBOT SEDANG BERBICARA";
 
+    mulaiMulutBerbicara();
+
   };
 
+
+  /* =================================================
+     SELESAI BERBICARA
+  ================================================= */
+
   suara.onend = function(){
+
+    berhentiMulutBerbicara();
 
     statusEl.innerText =
       "SIAP MEMBANTU";
 
   };
 
+
+  /* =================================================
+     ERROR SUARA
+  ================================================= */
+
+  suara.onerror = function(){
+
+    berhentiMulutBerbicara();
+
+    statusEl.innerText =
+      "SIAP MEMBANTU";
+
+  };
+
+
   window.speechSynthesis.speak(suara);
+
 }
 
 
@@ -1257,9 +1303,6 @@ function ambilFotoRobot(){
 
 initThree();
   
-testMulutV82();
-
-
 </script>
 
 </body>
