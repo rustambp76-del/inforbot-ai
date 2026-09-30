@@ -268,22 +268,49 @@ const micBtn = document.getElementById("micBtn");
 const helloBtn = document.getElementById("helloBtn");
 
 /* =====================================================
-   INFORBOT V9 - SISTEM WAJAH ANIMASI
+   INFORBOT V9.1
+   SISTEM MULUT TANPA GHOSTING
+===================================================== */
+/* =====================================================
+   THREE.JS
 ===================================================== */
 
-let headFoto = null;
-let headFotoTerbuka = null;
-let headFotoPejam = null;
+let scene = null;
+let camera = null;
+let renderer = null;
 
-let teksturWajahNormalV9 = null;
-let teksturMulutTerbukaV9 = null;
+let robot = null;
+let headGroup = null;
+let headFoto = null;
+
+let waktuAnimasi = 0;
+
+
+/* =====================================================
+   TEKSTUR WAJAH V9.1
+===================================================== */
+
+let teksturWajahNormalV91 = null;
+let teksturMulutTerbukaV91 = null;
 let teksturMataPejamV9 = null;
 
-let mulutSedangBerbicaraV9 = false;
 
-let waktuMulutV9 = 0;
-let faseMulutV9 = 0;
-let waktuAnimasi = 0;
+/* =====================================================
+   ANIMASI MULUT V9.1
+===================================================== */
+
+let mulutSedangBerbicaraV91 = false;
+let mulutTerbukaV91 = false;
+
+let waktuMulutV91 = 0;
+let durasiMulutV91 = 0;
+
+let faseMulutV91 = 0;
+
+
+/* =====================================================
+   KEDIP MATA V9.1
+===================================================== */
 
 let sedangBerkedipV9 = false;
 let kedipTimerV9 = null;
@@ -324,15 +351,16 @@ function initThree(){
   });
   headGroup.add(new THREE.Mesh(headGeo,headMat));
 
-  pasangWajahV9();
+  pasangWajahV91();
   animate();
 }
 
 /* =====================================================
-   INFORBOT V9 - SISTEM WAJAH
+   INFORBOT V9.1
+   LOAD WAJAH
 ===================================================== */
 
-function pasangWajahV9(){
+function pasangWajahV91(){
 
   const loader =
     new THREE.TextureLoader();
@@ -348,8 +376,12 @@ function pasangWajahV9(){
 
     function(texture){
 
-      teksturWajahNormalV9 =
+      teksturWajahNormalV91 =
         texture;
+
+      teksturWajahNormalV91.encoding =
+        THREE.sRGBEncoding;
+
 
       const geo =
         new THREE.PlaneGeometry(
@@ -358,16 +390,20 @@ function pasangWajahV9(){
         );
 
 
-      const matNormal =
+      const mat =
         new THREE.MeshBasicMaterial({
 
-          map:texture,
+          map:
+            teksturWajahNormalV91,
 
           transparent:true,
 
           opacity:1,
 
-          side:THREE.DoubleSide,
+          side:
+            THREE.DoubleSide,
+
+          depthTest:false,
 
           depthWrite:false
 
@@ -377,7 +413,7 @@ function pasangWajahV9(){
       headFoto =
         new THREE.Mesh(
           geo,
-          matNormal
+          mat
         );
 
 
@@ -388,69 +424,39 @@ function pasangWajahV9(){
       );
 
 
-      headFoto.renderOrder = 10;
+      headFoto.renderOrder =
+        10;
 
-      headGroup.add(headFoto);
+
+      headGroup.add(
+        headFoto
+      );
 
 
       console.log(
-        "✅ V9 WAJAH NORMAL SIAP"
+        "✅ V9.1 WAJAH NORMAL SIAP"
       );
 
 
       /* =============================================
-         WAJAH MULUT TERBUKA
+         LOAD MULUT TERBUKA
       ============================================= */
 
       loader.load(
 
         "./INFORBOT_HEAD_TERBUKA.png",
 
-        function(textureTerbuka){
+        function(texture){
 
-          teksturMulutTerbukaV9 =
-            textureTerbuka;
+          teksturMulutTerbukaV91 =
+            texture;
 
-
-          const matTerbuka =
-            new THREE.MeshBasicMaterial({
-
-              map:textureTerbuka,
-
-              transparent:true,
-
-              opacity:0,
-
-              side:THREE.DoubleSide,
-
-              depthWrite:false
-
-            });
-
-
-          headFotoTerbuka =
-            new THREE.Mesh(
-              geo.clone(),
-              matTerbuka
-            );
-
-
-          headFotoTerbuka.position.copy(
-            headFoto.position
-          );
-
-
-          headFotoTerbuka.renderOrder =
-            11;
-
-
-          headGroup.add(
-            headFotoTerbuka
-          );
+          teksturMulutTerbukaV91.encoding =
+            THREE.sRGBEncoding;
 
 
           console.log(
-            "👄 V9 WAJAH MULUT TERBUKA SIAP"
+            "👄 V9.1 TEKSTUR MULUT TERBUKA SIAP"
           );
 
         },
@@ -470,62 +476,36 @@ function pasangWajahV9(){
 
 
       /* =============================================
-         WAJAH MATA TERPEJAM
+         LOAD MATA TERPEJAM
       ============================================= */
 
       loader.load(
 
         "./INFORBOT_HEAD_PEJAM.png",
 
-        function(texturePejam){
+        function(texture){
 
           teksturMataPejamV9 =
-            texturePejam;
-
-
-          const matPejam =
-            new THREE.MeshBasicMaterial({
-
-              map:texturePejam,
-
-              transparent:true,
-
-              opacity:0,
-
-              side:THREE.DoubleSide,
-
-              depthWrite:false
-
-            });
-
-
-          headFotoPejam =
-            new THREE.Mesh(
-              geo.clone(),
-              matPejam
-            );
-
-
-          headFotoPejam.position.copy(
-            headFoto.position
-          );
-
-
-          headFotoPejam.renderOrder =
-            12;
-
-
-          headGroup.add(
-            headFotoPejam
-          );
+            texture;
 
 
           console.log(
-            "👁️ V9 TEKSTUR KEDIP SIAP"
+            "👁️ V9.1 TEKSTUR KEDIP SIAP"
           );
 
 
           mulaiKedipanV9();
+
+        },
+
+        undefined,
+
+        function(error){
+
+          console.warn(
+            "⚠️ TEKSTUR MATA PEJAM GAGAL DIMUAT",
+            error
+          );
 
         }
 
@@ -550,138 +530,232 @@ function pasangWajahV9(){
 
 
 /* =====================================================
-   MULUT V9 - ANIMASI HALUS
+   MULUT MULAI BERBICARA V9.1
 ===================================================== */
 
 function mulaiMulutBerbicara(){
 
-  mulutSedangBerbicaraV9 =
+  mulutSedangBerbicaraV91 =
     true;
 
-  waktuMulutV9 = 0;
+  waktuMulutV91 =
+    0;
+
+  durasiMulutV91 =
+    0.08;
+
+  faseMulutV91 =
+    Math.random();
+
 
   console.log(
-    "🔊 V9 MULUT MULAI"
+    "🔊 V9.1 MULUT MULAI BERBICARA"
   );
 
 }
 
+/* =====================================================
+   MULUT BERHENTI BERBICARA V9.1
+===================================================== */
 
 function berhentiMulutBerbicara(){
 
-  mulutSedangBerbicaraV9 =
+  mulutSedangBerbicaraV91 =
     false;
 
-  waktuMulutV9 = 0;
+  mulutTerbukaV91 =
+    false;
 
-  if(headFotoTerbuka){
+  waktuMulutV91 =
+    0;
 
-    headFotoTerbuka.material.opacity =
-      0;
+
+  if(
+    headFoto &&
+    teksturWajahNormalV91
+  ){
+
+    headFoto.material.map =
+      teksturWajahNormalV91;
+
+    headFoto.material.needsUpdate =
+      true;
 
   }
 
-  if(headFoto){
-
-    headFoto.material.opacity =
-      1;
-
-  }
 
   console.log(
-    "🔇 V9 MULUT BERHENTI"
+    "🔇 V9.1 MULUT BERHENTI"
   );
 
 }
 /* =====================================================
-   ANIMASI MULUT V9
-   CROSS-FADE WAJAH NORMAL ↔ MULUT TERBUKA
+   ANIMASI MULUT V9.1
+   NATURAL + TANPA GHOSTING
 ===================================================== */
 
 function animasiMulut(){
 
   if(
     !headFoto ||
-    !headFotoTerbuka
+    !teksturWajahNormalV91 ||
+    !teksturMulutTerbukaV91
   ){
+
     return;
+
   }
 
 
-  /* ================================================
+  /* =================================================
      TIDAK BERBICARA
-  ================================================ */
+  ================================================= */
 
-  if(!mulutSedangBerbicaraV9){
+  if(!mulutSedangBerbicaraV91){
 
-    headFotoTerbuka.material.opacity +=
-      (0 - headFotoTerbuka.material.opacity) * 0.25;
+    if(
+      headFoto.material.map !==
+      teksturWajahNormalV91
+    ){
 
-    headFoto.material.opacity +=
-      (1 - headFoto.material.opacity) * 0.25;
+      headFoto.material.map =
+        teksturWajahNormalV91;
+
+      headFoto.material.needsUpdate =
+        true;
+
+    }
+
+    mulutTerbukaV91 =
+      false;
 
     return;
+
   }
 
 
-  /* ================================================
-     WAKTU ANIMASI
-  ================================================ */
+  /* =================================================
+     WAKTU
+  ================================================= */
 
-  waktuMulutV9 += 0.016;
-
-
-  /* ================================================
-     GELOMBANG UTAMA
-  ================================================ */
-
-  const gelombang1 =
-    Math.abs(
-      Math.sin(
-        waktuMulutV9 * 8.5
-      )
-    );
+  waktuMulutV91 +=
+    0.016;
 
 
-  /* ================================================
-     GELOMBANG KEDUA
-  ================================================ */
+  /* =================================================
+     GANTI FASE
+  ================================================= */
 
-  const gelombang2 =
-    Math.abs(
-      Math.sin(
-        waktuMulutV9 * 13.7
-      )
-    );
+  if(
+    waktuMulutV91 >=
+    durasiMulutV91
+  ){
 
-
-  /* ================================================
-     GABUNGKAN
-  ================================================ */
-
-  const bukaan =
-    (
-      gelombang1 * 0.70 +
-      gelombang2 * 0.30
-    ) * 0.85;
+    waktuMulutV91 =
+      0;
 
 
-  /* ================================================
-     CROSS FADE
-  ================================================ */
-
-  headFotoTerbuka.material.opacity +=
-    (
-      bukaan -
-      headFotoTerbuka.material.opacity
-    ) * 0.30;
+    mulutTerbukaV91 =
+      !mulutTerbukaV91;
 
 
-  headFoto.material.opacity +=
-    (
-      (1 - bukaan) -
-      headFoto.material.opacity
-    ) * 0.30;
+    /* =============================================
+       MULUT TERBUKA
+    ============================================= */
+
+    if(mulutTerbukaV91){
+
+      headFoto.material.map =
+        teksturMulutTerbukaV91;
+
+      headFoto.material.needsUpdate =
+        true;
+
+
+      /*
+         Bukaan pendek / sedang / panjang.
+         Membuat gerakan tidak monoton.
+      */
+
+      const variasi =
+        Math.random();
+
+
+      if(variasi < 0.35){
+
+        durasiMulutV91 =
+          0.07;
+
+      }
+      else if(variasi < 0.75){
+
+        durasiMulutV91 =
+          0.11;
+
+      }
+      else{
+
+        durasiMulutV91 =
+          0.16;
+
+      }
+
+
+      console.log(
+        "👄 V9.1 MULUT TERBUKA"
+      );
+
+    }
+
+
+    /* =============================================
+       MULUT TERTUTUP
+    ============================================= */
+
+    else{
+
+      headFoto.material.map =
+        teksturWajahNormalV91;
+
+      headFoto.material.needsUpdate =
+        true;
+
+
+      /*
+         Jeda tertutup dibuat bervariasi.
+      */
+
+      const variasiTutup =
+        Math.random();
+
+
+      if(variasiTutup < 0.30){
+
+        durasiMulutV91 =
+          0.06;
+
+      }
+      else if(variasiTutup < 0.80){
+
+        durasiMulutV91 =
+          0.10;
+
+      }
+      else{
+
+        durasiMulutV91 =
+          0.14;
+
+      }
+
+
+      console.log(
+        "👄 V9.1 MULUT TERTUTUP"
+      );
+
+    }
+
+  }
 
 }
 function buatMataKedipSementara(){
@@ -702,14 +776,15 @@ function hapusMataKedipSementara(){
   if(mataKedipKanan){headGroup.remove(mataKedipKanan);mataKedipKanan=null;}
 }
 /* =====================================================
-   KEDIP MATA V9
+   KEDIP MATA V9.1
 ===================================================== */
 
 function kedipMataV9(){
 
   if(
     sedangBerkedipV9 ||
-    !headFotoPejam
+    !headFoto ||
+    !teksturMataPejamV9
   ){
 
     return;
@@ -721,27 +796,61 @@ function kedipMataV9(){
     true;
 
 
+  const teksturSebelumnya =
+    headFoto.material.map;
+
+
   /*
-     Tutup mata
+     Mata tertutup
   */
 
-  headFotoPejam.material.opacity =
-    1;
+  headFoto.material.map =
+    teksturMataPejamV9;
+
+  headFoto.material.needsUpdate =
+    true;
 
 
   setTimeout(function(){
 
-    if(headFotoPejam){
+    if(
+      headFoto &&
+      headFoto.material
+    ){
 
-      headFotoPejam.material.opacity =
-        0;
+      /*
+         Kembalikan sesuai keadaan mulut.
+      */
+
+      if(
+        mulutSedangBerbicaraV91 &&
+        mulutTerbukaV91 &&
+        teksturMulutTerbukaV91
+      ){
+
+        headFoto.material.map =
+          teksturMulutTerbukaV91;
+
+      }
+      else{
+
+        headFoto.material.map =
+          teksturWajahNormalV91;
+
+      }
+
+
+      headFoto.material.needsUpdate =
+        true;
 
     }
+
 
     sedangBerkedipV9 =
       false;
 
-  },180);
+
+  },150);
 
 }
 /* =====================================================
