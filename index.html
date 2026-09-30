@@ -288,6 +288,20 @@ let waktuAnimasi=0;
 let textureMataPejam=null;
 let mataKedipKiri=null;
 let mataKedipKanan=null;
+/* =====================================================
+   SISTEM WAJAH INFORBOT V8.2
+===================================================== */
+
+let teksturWajahNormalV8 = null;
+let teksturMulutTerbukaV8 = null;
+
+let mulutSedangBerbicaraV8 = false;
+let mulutTerbukaV8 = false;
+let waktuMulutV8 = 0;
+
+let textureMataPejam = null;
+let sedangBerkedip = false;
+let kedipTimer = null;
 
 function initThree(){
   scene=new THREE.Scene();
@@ -348,9 +362,46 @@ function pasangTeksturWajah(texture){
   const geo=new THREE.PlaneGeometry(2.35,1.78);
   const mat=new THREE.MeshBasicMaterial({map:texture,transparent:true,side:THREE.DoubleSide,depthTest:false,depthWrite:false});
   headFoto=new THREE.Mesh(geo,mat);
+  /* =====================================================
+   SIMPAN TEKSTUR WAJAH NORMAL
+===================================================== */
+
+teksturWajahNormalV8 = texture;
   headFoto.position.set(0,.05,.78);
   headFoto.renderOrder=10;
   headGroup.add(headFoto);
+  /* =====================================================
+   LOAD WAJAH MULUT TERBUKA
+===================================================== */
+
+const loaderMulutTerbuka =
+  new THREE.TextureLoader();
+
+loaderMulutTerbuka.load(
+  "./INFORBOT_HEAD_TERBUKA.png",
+
+  function(textureTerbuka){
+
+    teksturMulutTerbukaV8 =
+      textureTerbuka;
+
+    console.log(
+      "✅ INFORBOT_HEAD_TERBUKA.png BERHASIL DIMUAT"
+    );
+
+  },
+
+  undefined,
+
+  function(error){
+
+    console.error(
+      "❌ GAGAL MEMUAT INFORBOT_HEAD_TERBUKA.png",
+      error
+    );
+
+  }
+);
   console.log('INFORBOT_HEAD.png berhasil dipasang.');
 }
 
@@ -363,14 +414,48 @@ function muatTeksturPejam(){
     console.log('Tekstur pejam tidak tersedia; fallback kedip sintetis aktif.');
   });
 }
-
 /* =====================================================
-   INFORBOT V8.1
-   ANIMASI MULUT DENGAN PERGANTIAN TEKSTUR
+   LOAD TEKSTUR MATA TERPEJAM
 ===================================================== */
 
-let waktuMulutV8 = 0;
-let mulutTerbukaV8 = false;
+const loaderPejam =
+  new THREE.TextureLoader();
+
+loaderPejam.load(
+
+  "./INFORBOT_HEAD_PEJAM.png",
+
+  function(texturePejam){
+
+    textureMataPejam =
+      texturePejam;
+
+    console.log(
+      "👁️ INFORBOT_HEAD_PEJAM.png BERHASIL DIMUAT"
+    );
+
+    /* MULAI SISTEM KEDIP */
+    mulaiKedipan();
+
+  },
+
+  undefined,
+
+  function(error){
+
+    console.warn(
+      "⚠️ INFORBOT_HEAD_PEJAM.png TIDAK DITEMUKAN",
+      error
+    );
+
+  }
+
+);
+
+/* =====================================================
+   INFORBOT V8.2
+   ANIMASI MULUT BERDASARKAN TEKSTUR
+===================================================== */
 
 function animasiMulut(){
 
@@ -382,6 +467,19 @@ function animasiMulut(){
     return;
   }
 
+  /*
+     Kalau sedang berkedip,
+     jangan ganggu tekstur mata.
+  */
+
+  if(sedangBerkedip){
+    return;
+  }
+
+  /*
+     Pastikan kedua tekstur sudah tersedia.
+  */
+
   if(!teksturWajahNormalV8){
     return;
   }
@@ -392,7 +490,7 @@ function animasiMulut(){
 
 
   /* =================================================
-     TIDAK SEDANG BERBICARA
+     TIDAK BERBICARA
   ================================================= */
 
   if(!mulutSedangBerbicaraV8){
@@ -407,7 +505,6 @@ function animasiMulut(){
 
       headFoto.material.needsUpdate =
         true;
-
     }
 
     mulutTerbukaV8 = false;
@@ -424,10 +521,10 @@ function animasiMulut(){
 
 
   /*
-     Pergantian setiap ±0.14 detik
+     Kecepatan buka-tutup mulut
   */
 
-  if(waktuMulutV8 >= 0.14){
+  if(waktuMulutV8 >= 0.16){
 
     waktuMulutV8 = 0;
 
@@ -437,49 +534,52 @@ function animasiMulut(){
 
     if(mulutTerbukaV8){
 
-      /* ==========================================
-         MULUT TERBUKA
-      ========================================== */
-
       headFoto.material.map =
         teksturMulutTerbukaV8;
 
       console.log(
-        "👄 V8.1 MULUT TERBUKA"
+        "👄 MULUT TERBUKA"
       );
 
     }
     else{
 
-      /* ==========================================
-         MULUT TERTUTUP
-      ========================================== */
-
       headFoto.material.map =
         teksturWajahNormalV8;
 
       console.log(
-        "👄 V8.1 MULUT TERTUTUP"
+        "👄 MULUT TERTUTUP"
       );
 
     }
 
-
     headFoto.material.needsUpdate =
       true;
-
   }
 
 }
 
 /* =====================================================
-   TEST MULUT V8
+   MULAI BERBICARA
 ===================================================== */
 
-function testMulutV8(){
+function mulaiMulutBerbicara(){
+
+  mulutSedangBerbicaraV8 =
+    true;
+
+  waktuMulutV8 = 0;
 
   console.log(
-    "🧪 TEST MULUT V8 DIMULAI"
+    "🔊 INFORBOT MULAI BERBICARA"
+  );
+
+}
+
+function testMulutV82(){
+
+  console.log(
+    "🧪 TEST MULUT V8.2"
   );
 
   mulaiMulutBerbicara();
@@ -488,32 +588,40 @@ function testMulutV8(){
 
     berhentiMulutBerbicara();
 
-    console.log(
-      "🧪 TEST MULUT V8 SELESAI"
-    );
-
   },5000);
 
 }
 
-
 /* =====================================================
-   BERHENTI MULUT BERBICARA
+   BERHENTI BERBICARA
 ===================================================== */
 
 function berhentiMulutBerbicara(){
 
-  mulutBerbicara = false;
+  mulutSedangBerbicaraV8 =
+    false;
 
-  if(mulut){
+  mulutTerbukaV8 =
+    false;
 
-    mulut.scale.y =
-      0.08;
+  waktuMulutV8 =
+    0;
 
+  if(
+    headFoto &&
+    headFoto.material &&
+    teksturWajahNormalV8
+  ){
+
+    headFoto.material.map =
+      teksturWajahNormalV8;
+
+    headFoto.material.needsUpdate =
+      true;
   }
 
   console.log(
-    "👄 INFORBOT BERHENTI BERBICARA"
+    "🔇 INFORBOT BERHENTI BERBICARA"
   );
 
 }
@@ -619,23 +727,77 @@ function mulaiKedipan(){
   kedipTimer=setTimeout(function(){kedipMata();mulaiKedipan();},2500+Math.random()*3500);
 }
 
-function kedipMata(){
-  if(sedangBerkedip||!headFoto)return;
-  sedangBerkedip=true;
+/* =====================================================
+   KEDIP MATA
+===================================================== */
 
-  if(textureMataPejam){
-    const old=headFoto.material.map;
-    headFoto.material.map=textureMataPejam;
-    headFoto.material.needsUpdate=true;
-    setTimeout(function(){
-      if(headFoto&&headFoto.material){
-        headFoto.material.map=old;
-        headFoto.material.needsUpdate=true;
-      }
-      sedangBerkedip=false;
-    },180);
+function kedipMata(){
+
+  if(
+    sedangBerkedip ||
+    !headFoto ||
+    !textureMataPejam
+  ){
+
     return;
   }
+
+  sedangBerkedip = true;
+
+  const teksturSebelumnya =
+    headFoto.material.map;
+
+
+  /* MATA TERPEJAM */
+
+  headFoto.material.map =
+    textureMataPejam;
+
+  headFoto.material.needsUpdate =
+    true;
+
+
+  setTimeout(function(){
+
+    if(
+      headFoto &&
+      headFoto.material
+    ){
+
+      /*
+         Kembalikan tekstur sebelumnya.
+         Kalau sedang berbicara,
+         akan kembali ke kondisi mulut
+         yang sedang aktif.
+      */
+
+      if(
+        mulutSedangBerbicaraV8 &&
+        mulutTerbukaV8 &&
+        teksturMulutTerbukaV8
+      ){
+
+        headFoto.material.map =
+          teksturMulutTerbukaV8;
+
+      }
+      else{
+
+        headFoto.material.map =
+          teksturWajahNormalV8;
+
+      }
+
+      headFoto.material.needsUpdate =
+        true;
+
+    }
+
+    sedangBerkedip = false;
+
+  },180);
+
+}
 
   buatMataKedipSementara();
   setTimeout(function(){hapusMataKedipSementara();sedangBerkedip=false;},150);
@@ -659,10 +821,27 @@ function hapusMataKedipSementara(){
   if(mataKedipKanan){headGroup.remove(mataKedipKanan);mataKedipKanan=null;}
 }
 
-function mulaiSistemKedip(){
-  if(kedipTimer)clearTimeout(kedipTimer);
-  mulaiKedipan();
-  console.log('Sistem kedip INFORBOT siap.');
+/* =====================================================
+   JADWAL KEDIP
+===================================================== */
+
+function mulaiKedipan(){
+
+  if(kedipTimer){
+
+    clearTimeout(kedipTimer);
+
+  }
+
+  kedipTimer =
+    setTimeout(function(){
+
+      kedipMata();
+
+      mulaiKedipan();
+
+    },2500 + Math.random() * 3500);
+
 }
 
 /* SATU-SATUNYA animate() */
@@ -1085,7 +1264,8 @@ function ambilFotoRobot(){
 ===================================================== */
 
 initThree();
-
+  
+testMulutV82();
 
 
 </script>
