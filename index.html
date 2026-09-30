@@ -405,15 +405,7 @@ loaderMulutTerbuka.load(
   console.log('INFORBOT_HEAD.png berhasil dipasang.');
 }
 
-function muatTeksturPejam(){
-  new THREE.TextureLoader().load('./INFORBOT_HEAD_PEJAM.png',function(texture){
-    textureMataPejam=texture;
-    console.log('Tekstur mata pejam siap.');
-  },undefined,function(){
-    textureMataPejam=null;
-    console.log('Tekstur pejam tidak tersedia; fallback kedip sintetis aktif.');
-  });
-}
+
 /* =====================================================
    LOAD TEKSTUR MATA TERPEJAM
 ===================================================== */
