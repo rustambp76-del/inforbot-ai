@@ -286,43 +286,6 @@ let headFoto = null;
 let waktuAnimasi = 0;
 
 
-/* =====================================================
-   TEKSTUR WAJAH V9.1
-===================================================== */
-
-let teksturWajahNormalV91 = null;
-let teksturMulutTerbukaV91 = null;
-let teksturMataPejamV9 = null;
-
-
-/* =====================================================
-   ANIMASI MULUT V9.1
-===================================================== */
-
-let mulutSedangBerbicaraV91 = false;
-let mulutTerbukaV91 = false;
-
-let waktuMulutV91 = 0;
-let durasiMulutV91 = 0;
-
-let faseMulutV91 = 0;
-
-
-/* =====================================================
-   KEDIP MATA V9.1
-===================================================== */
-
-let sedangBerkedipV9 = false;
-let kedipTimerV9 = null;
-// ========================================
-// INFORBOT AI V10 - MATA LAYER
-// ========================================
-
-let mataLayerV10 = null;
-let mataPejamV10 = null;
-
-let sedangBerkedipV10 = false;
-let timerKedipV10 = null;
 // ========================================
 // INFORBOT AI V10 - FACE LAYER SYSTEM
 // ========================================
@@ -380,11 +343,9 @@ function initThree(){
   headGroup.add(new THREE.Mesh(headGeo,headMat));
 
   pasangWajahV91();
-
   buatMataLayerV10();
-
   mulaiKedipanV10();
-
+  kedipMataV10();
   animate();
 }
 
@@ -836,6 +797,51 @@ function hapusMataKedipSementara(){
   if(mataKedipKanan){headGroup.remove(mataKedipKanan);mataKedipKanan=null;}
 }
 
+/* ========================================
+   INFORBOT AI V10
+   KEDIP MATA
+======================================== */
+
+function kedipMataV10(){
+
+  if(
+    sedangBerkedipV10 ||
+    !mataPejamV10
+  ){
+    return;
+  }
+
+  sedangBerkedipV10 = true;
+
+  console.log("👁️ V10 MATA MENUTUP");
+
+  // TUTUP MATA
+  mataPejamV10.forEach(function(mata){
+
+    mata.material.opacity = 0.95;
+
+  });
+
+  // BUKA KEMBALI
+  setTimeout(function(){
+
+    if(mataPejamV10){
+
+      mataPejamV10.forEach(function(mata){
+
+        mata.material.opacity = 0;
+
+      });
+
+    }
+
+    sedangBerkedipV10 = false;
+
+    console.log("👁️ V10 MATA TERBUKA");
+
+  },180);
+}
+  
 /* =====================================================
    INFORBOT V9.2
    KEDIP MATA LEBIH TERLIHAT
@@ -935,6 +941,40 @@ function kedipMataV9(){
 
   },240);
 
+}
+
+function kedipMataV10(){
+
+  if(
+    sedangBerkedipV10 ||
+    !mataPejamV10
+  ){
+    return;
+  }
+
+  sedangBerkedipV10 = true;
+
+  console.log("👁️ V10 MATA MENUTUP");
+
+  mataPejamV10.forEach(function(mata){
+    mata.material.opacity = 0.95;
+  });
+
+  setTimeout(function(){
+
+    if(mataPejamV10){
+
+      mataPejamV10.forEach(function(mata){
+        mata.material.opacity = 0;
+      });
+
+    }
+
+    sedangBerkedipV10 = false;
+
+    console.log("👁️ V10 MATA TERBUKA");
+
+  },180);
 }
 /* =====================================================
    JADWAL KEDIP V9.2
