@@ -262,13 +262,15 @@ let durasiMulutV91 = 0;
 
 let faseMulutV91 = 0;
 /* =====================================================
-   INFORBOT AI V10 - MATA LAYER
+   INFORBOT AI V12
+   KEDIP MATA DENGAN GAMBAR
 ===================================================== */
-let mataLayerV10 = null;
-let mataPejamV10 = null;
 
-let sedangBerkedipV10 = false;
-let timerKedipV10 = null;
+let mataPejamV12 = null;
+let teksturMataPejamV12 = null;
+
+let sedangBerkedipV12 = false;
+let timerKedipV12 = null;
 
 function initThree(){
   scene=new THREE.Scene();
@@ -306,8 +308,8 @@ function initThree(){
   });
   headGroup.add(new THREE.Mesh(headGeo,headMat));
   pasangWajahV91();
-  buatKelopakNaturalV11();
-  mulaiKedipanV10();
+  buatMataPejamV12();
+  mulaiKedipanV12();
   animate();
 }
 
@@ -692,73 +694,219 @@ function buatKelopakNaturalV11(){
   );
 }
 
-
 /* =====================================================
-   KEDIP MATA V11.2
+   INFORBOT AI V12
+   MATA TERPEJAM BERBASIS GAMBAR
 ===================================================== */
 
-function kedipMataV10(){
+function buatMataPejamV12(){
+
+  if(!headGroup){
+    console.log(
+      "V12: headGroup belum siap"
+    );
+    return;
+  }
+
+  const loader =
+    new THREE.TextureLoader();
+
+  loader.load(
+
+    "./INFORBOT_EYES_CLOSED.png",
+
+    function(texture){
+
+      teksturMataPejamV12 =
+        texture;
+
+      teksturMataPejamV12.encoding =
+        THREE.sRGBEncoding;
+
+
+      const geo =
+        new THREE.PlaneGeometry(
+          2.35,
+          1.78
+        );
+
+
+      const mat =
+        new THREE.MeshBasicMaterial({
+
+          map:
+            teksturMataPejamV12,
+
+          transparent:true,
+
+          opacity:0,
+
+          side:
+            THREE.DoubleSide,
+
+          depthTest:false,
+
+          depthWrite:false
+
+        });
+
+
+      mataPejamV12 =
+        new THREE.Mesh(
+          geo,
+          mat
+        );
+
+
+      /*
+         Posisi mengikuti bidang
+         INFORBOT_HEAD.png
+      */
+
+      mataPejamV12.position.set(
+        0,
+        0.05,
+        0.80
+      );
+
+
+      /*
+         Sama ukuran dengan foto wajah.
+      */
+
+      mataPejamV12.renderOrder =
+        50;
+
+
+      headGroup.add(
+        mataPejamV12
+      );
+
+
+      console.log(
+        "👁️ V12 MATA TERPEJAM SIAP"
+      );
+
+    },
+
+    undefined,
+
+    function(error){
+
+      console.error(
+        "❌ V12 GAGAL MEMUAT INFORBOT_EYES_CLOSED.png",
+        error
+      );
+
+    }
+
+  );
+
+}
+
+
+/* =====================================================
+   KEDIP V12
+===================================================== */
+
+function kedipMataV12(){
 
   if(
-    sedangBerkedipV10 ||
-    !mataPejamV10
+    sedangBerkedipV12 ||
+    !mataPejamV12
   ){
     return;
   }
 
-  sedangBerkedipV10 = true;
+
+  sedangBerkedipV12 = true;
+
 
   console.log(
-    "👁️ V11.2 MATA MENUTUP"
+    "👁️ V12 MATA MENUTUP"
   );
 
 
   /*
-     BUKA → TUTUP
-     Kelopak diperbesar vertikal.
+     Tampilkan gambar mata tertutup.
   */
 
-  mataPejamV10.forEach(
-    function(mata){
-
-      mata.scale.y = 1;
-
-    }
-  );
+  mataPejamV12.material.opacity = 1;
 
 
   /*
-     Tahan sebentar.
+     Tahan 160 ms.
   */
 
   setTimeout(
+
     function(){
 
-      if(!mataPejamV10){
-        return;
+      if(mataPejamV12){
+
+        mataPejamV12.material.opacity = 0;
+
       }
 
-      /*
-         BUKA KEMBALI
-      */
 
-      mataPejamV10.forEach(
-        function(mata){
+      sedangBerkedipV12 = false;
 
-          mata.scale.y = 0.05;
-
-        }
-      );
-
-      sedangBerkedipV10 = false;
 
       console.log(
-        "👁️ V11.2 MATA TERBUKA"
+        "👁️ V12 MATA TERBUKA"
       );
 
     },
-    140
+
+    160
+
   );
+
+}
+
+
+/* =====================================================
+   JADWAL KEDIP V12
+===================================================== */
+
+function mulaiKedipanV12(){
+
+  if(timerKedipV12){
+
+    clearTimeout(
+      timerKedipV12
+    );
+
+  }
+
+
+  const jeda =
+    4000 +
+    Math.random() * 3000;
+
+
+  timerKedipV12 =
+    setTimeout(
+
+      function(){
+
+        kedipMataV12();
+
+        mulaiKedipanV12();
+
+      },
+
+      jeda
+
+    );
+
+
+  console.log(
+    "👁️ V12 jadwal kedip:",
+    Math.round(jeda),
+    "ms"
+  );
+
 }
 
 /* =====================================================
