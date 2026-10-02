@@ -308,6 +308,7 @@ function initThree(){
   pasangWajahV91();
   buatMataLayerV10();
   mulaiKedipanV10();
+  buatKelopakNaturalV11();
     animate();
 }
 
@@ -567,145 +568,229 @@ function hapusMataKedipSementara(){
   if(mataKedipKiri){headGroup.remove(mataKedipKiri);mataKedipKiri=null;}
   if(mataKedipKanan){headGroup.remove(mataKedipKanan);mataKedipKanan=null;}
 }
+/* =====================================================
+   INFORBOT AI V11
+   KEDIP MATA NATURAL
+===================================================== */
 
-/* ========================================
-   INFORBOT AI V10
-   KEDIP MATA
-======================================== */
+function buatKelopakNaturalV11(){
+
+  if(!headGroup){
+    console.log("V11: headGroup belum siap");
+    return;
+  }
+
+  // Hapus layer mata lama jika masih ada
+  if(mataLayerV10){
+    headGroup.remove(mataLayerV10);
+    mataLayerV10 = null;
+  }
+
+  mataLayerV10 = new THREE.Group();
+
+  /*
+     Layer ditempatkan sangat dekat dengan wajah.
+     Tidak menggunakan garis kotak lagi.
+  */
+  mataLayerV10.position.set(0,0,0.035);
+
+  headGroup.add(mataLayerV10);
+
+  function buatKelopak(x){
+
+    const shape = new THREE.Shape();
+
+    /*
+       Bentuk kelopak sedikit melengkung.
+       Bukan garis lurus.
+    */
+
+    shape.moveTo(-0.18,0);
+
+    shape.quadraticCurveTo(
+      0,
+      0.055,
+      0.18,
+      0
+    );
+
+    shape.quadraticCurveTo(
+      0,
+      -0.025,
+      -0.18,
+      0
+    );
+
+    const geo = new THREE.ShapeGeometry(shape);
+
+    const mat = new THREE.MeshBasicMaterial({
+      color:0x07111c,
+      transparent:true,
+      opacity:0,
+      side:THREE.DoubleSide,
+      depthTest:false,
+      depthWrite:false
+    });
+
+    const kelopak = new THREE.Mesh(geo,mat);
+
+    kelopak.position.set(
+      x,
+      0.18,
+      0.01
+    );
+
+    /*
+       Sedikit miring mengikuti bentuk mata.
+    */
+
+    if(x < 0){
+      kelopak.rotation.z = 0.035;
+    }else{
+      kelopak.rotation.z = -0.035;
+    }
+
+    kelopak.scale.set(
+      1.0,
+      1.15,
+      1
+    );
+
+    kelopak.renderOrder = 200;
+
+    return kelopak;
+  }
+
+  const kiri = buatKelopak(-0.42);
+  const kanan = buatKelopak(0.42);
+
+  mataLayerV10.add(kiri);
+  mataLayerV10.add(kanan);
+
+  mataPejamV10 = [
+    kiri,
+    kanan
+  ];
+
+  console.log(
+    "👁️ V11: KELopak MATA NATURAL SIAP"
+  );
+}
+
+
+/* =====================================================
+   KEDIP NATURAL V11
+===================================================== */
+
 function kedipMataV10(){
+
   if(
     sedangBerkedipV10 ||
     !mataPejamV10
   ){
     return;
   }
-  sedangBerkedipV10 = true;
-  console.log("👁️ V10 MATA MENUTUP");
 
-  // TUTUP MATA
+  sedangBerkedipV10 = true;
+
+  console.log(
+    "👁️ V11 MATA MENUTUP"
+  );
+
+  /*
+     Fase menutup
+  */
+
   mataPejamV10.forEach(function(mata){
+
     mata.material.opacity = 0.95;
+
+    mata.scale.y = 0.25;
+
   });
 
-  // BUKA KEMBALI
+
+  /*
+     Mata tertutup hanya sebentar.
+  */
+
   setTimeout(function(){
-    if(mataPejamV10){
-      mataPejamV10.forEach(function(mata){
-        mata.material.opacity = 0;
-      });
+
+    if(!mataPejamV10){
+      return;
     }
-    sedangBerkedipV10 = false;
-    console.log("👁️ V10 MATA TERBUKA");
-  },180);
+
+    /*
+       Buka kembali secara bertahap
+    */
+
+    mataPejamV10.forEach(function(mata){
+
+      mata.material.opacity = 0.55;
+      mata.scale.y = 0.65;
+
+    });
+
+
+    setTimeout(function(){
+
+      if(!mataPejamV10){
+        return;
+      }
+
+      mataPejamV10.forEach(function(mata){
+
+        mata.material.opacity = 0;
+        mata.scale.y = 1.15;
+
+      });
+
+      sedangBerkedipV10 = false;
+
+      console.log(
+        "👁️ V11 MATA TERBUKA"
+      );
+
+    },70);
+
+  },110);
 }
-  
+
+
+/* =====================================================
+   JADWAL KEDIP V11
+===================================================== */
 
 function mulaiKedipanV10(){
 
   if(timerKedipV10){
-    clearTimeout(
-      timerKedipV10
-    );
+    clearTimeout(timerKedipV10);
   }
 
   /*
-     Kedip acak setiap
-     3,5 - 7 detik.
+     Kedipan setiap ±4–7 detik.
+     Tidak terlalu sering.
   */
 
   const jeda =
-    3500 +
-    Math.random() * 3500;
-  timerKedipV10 =
-    setTimeout(function(){
+    4000 +
+    Math.random() * 3000;
+
+  timerKedipV10 = setTimeout(
+    function(){
+
       kedipMataV10();
+
       mulaiKedipanV10();
-    },jeda);
+
+    },
+    jeda
+  );
+
   console.log(
-    "👁️ V10 jadwal kedip:",
+    "👁️ V11 jadwal kedip:",
     Math.round(jeda),
     "ms"
-  );
-}
-/* ========================================
-   INFORBOT AI V10
-   SISTEM KEDIP MATA INDEPENDEN
-======================================== */
-
-function buatMataLayerV10(){
-  if(!headGroup){
-    console.log("V10: headGroup belum siap");
-    return;
-  }
-
-  // Jangan membuat dua kali
-  if(mataLayerV10){
-    headGroup.remove(mataLayerV10);
-    mataLayerV10 = null;
-  }
-  mataLayerV10 = new THREE.Group();
-
-  /*
-     Layer mata berada sedikit di depan
-     permukaan wajah.
-  */
-  mataLayerV10.position.set(
-    0,
-    0,
-    0.025
-  );
-  headGroup.add(mataLayerV10);
-
-  /*
-     Dua garis tipis sebagai kelopak mata.
-     Awalnya transparan.
-  */
-  const geo = new THREE.PlaneGeometry(
-    0.38,
-    0.055
-  );
-  const matKiri =
-    new THREE.MeshBasicMaterial({
-      color:0x07111c,
-      transparent:true,
-      opacity:0,
-      depthTest:false,
-      depthWrite:false
-    });
-  const matKanan =
-    matKiri.clone();
-  const kiri =
-    new THREE.Mesh(
-      geo,
-      matKiri
-    );
-  const kanan =
-    new THREE.Mesh(
-      geo,
-      matKanan
-    );
-  kiri.position.set(
-    -0.42,
-    0.18,
-    0.01
-  );
-  kanan.position.set(
-    0.42,
-    0.18,
-    0.01
-  );
-  kiri.renderOrder = 200;
-  kanan.renderOrder = 200;
-  mataLayerV10.add(
-    kiri,
-    kanan
-  );
-  mataPejamV10 = [
-    kiri,
-    kanan
-  ];
-  console.log(
-    "👁️ V10: Mata layer berhasil dibuat"
   );
 }
   
