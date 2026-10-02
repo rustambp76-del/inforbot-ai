@@ -568,18 +568,17 @@ function hapusMataKedipSementara(){
   if(mataKedipKanan){headGroup.remove(mataKedipKanan);mataKedipKanan=null;}
 }
 /* =====================================================
-   INFORBOT AI V11
-   KEDIP MATA NATURAL
+   INFORBOT AI V11.1
+   KELOPAK MATA TEPAT DI ATAS MATA ASLI
 ===================================================== */
 
 function buatKelopakNaturalV11(){
 
   if(!headGroup){
-    console.log("V11: headGroup belum siap");
+    console.log("V11.1: headGroup belum siap");
     return;
   }
 
-  // Hapus layer mata lama jika masih ada
   if(mataLayerV10){
     headGroup.remove(mataLayerV10);
     mataLayerV10 = null;
@@ -588,91 +587,108 @@ function buatKelopakNaturalV11(){
   mataLayerV10 = new THREE.Group();
 
   /*
-     Layer ditempatkan sangat dekat dengan wajah.
-     Tidak menggunakan garis kotak lagi.
+     PENTING:
+     Layer dibuat benar-benar di depan foto wajah.
   */
-  mataLayerV10.position.set(0,0,0.035);
+  mataLayerV10.position.set(
+    0,
+    0,
+    0.90
+  );
 
   headGroup.add(mataLayerV10);
 
+
   function buatKelopak(x){
+
+    /*
+       Bentuk kelopak:
+       sedikit melengkung, bukan garis lurus.
+    */
 
     const shape = new THREE.Shape();
 
+    shape.moveTo(-0.16,0);
+
+    shape.quadraticCurveTo(
+      0,
+      0.045,
+      0.16,
+      0
+    );
+
+    shape.quadraticCurveTo(
+      0,
+      -0.035,
+      -0.16,
+      0
+    );
+
+    const geo =
+      new THREE.ShapeGeometry(shape);
+
+    const mat =
+      new THREE.MeshBasicMaterial({
+        color:0x07111c,
+        transparent:true,
+        opacity:0,
+        side:THREE.DoubleSide,
+        depthTest:false,
+        depthWrite:false
+      });
+
+    const kelopak =
+      new THREE.Mesh(
+        geo,
+        mat
+      );
+
     /*
-       Bentuk kelopak sedikit melengkung.
-       Bukan garis lurus.
+       POSISI MATA
+       Kita naikkan sedikit agar
+       benar-benar mengenai mata wajah.
     */
-
-    shape.moveTo(-0.18,0);
-
-    shape.quadraticCurveTo(
-      0,
-      0.055,
-      0.18,
-      0
-    );
-
-    shape.quadraticCurveTo(
-      0,
-      -0.025,
-      -0.18,
-      0
-    );
-
-    const geo = new THREE.ShapeGeometry(shape);
-
-    const mat = new THREE.MeshBasicMaterial({
-      color:0x07111c,
-      transparent:true,
-      opacity:0,
-      side:THREE.DoubleSide,
-      depthTest:false,
-      depthWrite:false
-    });
-
-    const kelopak = new THREE.Mesh(geo,mat);
 
     kelopak.position.set(
       x,
-      0.18,
-      0.01
+      0.27,
+      0
     );
-
-    /*
-       Sedikit miring mengikuti bentuk mata.
-    */
 
     if(x < 0){
       kelopak.rotation.z = 0.035;
-    }else{
+    }
+    else{
       kelopak.rotation.z = -0.035;
     }
 
-    kelopak.scale.set(
-      1.0,
-      1.15,
-      1
-    );
-
-    kelopak.renderOrder = 200;
+    kelopak.renderOrder = 300;
 
     return kelopak;
   }
 
-  const kiri = buatKelopak(-0.42);
-  const kanan = buatKelopak(0.42);
 
-  mataLayerV10.add(kiri);
-  mataLayerV10.add(kanan);
+  const kiri =
+    buatKelopak(-0.42);
+
+  const kanan =
+    buatKelopak(0.42);
+
+
+  mataLayerV10.add(
+    kiri,
+    kanan
+  );
+
 
   mataPejamV10 = [
     kiri,
     kanan
   ];
 
+
   console.log(
-    "👁️ V11: KELopak MATA NATURAL SIAP"
+    "👁️ V11.1 KELOPAK MATA SIAP"
   );
 }
 
