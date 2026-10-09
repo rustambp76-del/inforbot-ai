@@ -376,7 +376,7 @@ function pasangWajahV91(){
 function buatLapisanMulutV13(){
   if(!headGroup) return;
 
-  const geo = new THREE.PlaneGeometry(0.78, 0.32);
+  const geo = new THREE.PlaneGeometry(0.82, 0.47);
   const mat = new THREE.MeshBasicMaterial({
     transparent: true,
     opacity: 1,
@@ -398,44 +398,31 @@ function buatLapisanMulutV13(){
 
 function loaderFrameMulutV13(nama, index){
   const loader = new THREE.TextureLoader();
+
   loader.load(
     "./" + nama,
     function(texture){
-      const img = texture.image;
-      const canvas = document.createElement("canvas");
-      canvas.width = 320;
-      canvas.height = 130;
-      const ctx = canvas.getContext("2d");
+      /*
+       * V13.1:
+       * Gunakan PNG transparan secara langsung.
+       * Jangan crop ulang menggunakan canvas, karena aset sudah
+       * dipisahkan dan pemotongan ulang bisa menghilangkan bagian bibir.
+       */
+      texture.encoding = THREE.sRGBEncoding;
+      texture.minFilter = THREE.LinearFilter;
+      texture.magFilter = THREE.LinearFilter;
+      texture.needsUpdate = true;
 
-      /* Crop bagian mulut saja; area hidung dan dagu diminimalkan. */
-      const sx = Math.max(0, Math.round(img.width * 0.225));
-      const sy = Math.max(0, Math.round(img.height * 0.32));
-      const sw = Math.min(Math.round(img.width * 0.55), img.width - sx);
-      const sh = Math.min(Math.round(img.height * 0.42), img.height - sy);
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.drawImage(img, sx, sy, sw, sh, 0, 0, canvas.width, canvas.height);
-
-      /* Feather tepi supaya lapisan tidak tampak seperti kotak tempelan. */
-      ctx.globalCompositeOperation = "destination-in";
-      const grad = ctx.createRadialGradient(160, 65, 25, 160, 65, 180);
-      grad.addColorStop(0, "rgba(255,255,255,1)");
-      grad.addColorStop(0.72, "rgba(255,255,255,0.98)");
-      grad.addColorStop(1, "rgba(255,255,255,0)");
-      ctx.fillStyle = grad;
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.globalCompositeOperation = "source-over";
-
-      const frameTexture = new THREE.CanvasTexture(canvas);
-      frameTexture.encoding = THREE.sRGBEncoding;
-      frameTexture.needsUpdate = true;
-      mouthFramesV13[index] = frameTexture;
+      mouthFramesV13[index] = texture;
       mouthAssetsLoadedV13++;
 
       if(index === 0 && mouthMeshV13){
-        mouthMeshV13.material.map = frameTexture;
+        mouthMeshV13.material.map = texture;
         mouthMeshV13.material.needsUpdate = true;
       }
-      console.log("👄 V13 frame siap:", nama);
+
+      console.log("👄 V13.1 frame siap:", nama,
+                  "(" + mouthAssetsLoadedV13 + "/6)");
     },
     undefined,
     function(error){
@@ -486,7 +473,7 @@ function berhentiMulutBerbicara(){
 ===================================================== */
 function animasiMulut(){
   if(!mulutSedangBerbicaraV91 || !mouthMeshV13) return;
-  if(mouthAssetsLoadedV13 < 2) return;
+  if(mouthAssetsLoadedV13 < 6) return;
 
   mouthMeshV13.visible = true;
   mouthTimerV13 += 0.016;
