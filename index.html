@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>INFORBOT AI V13.2 - Rustam, S.E.</title>
+<title>INFORBOT AI V13.3 - Rustam, S.E.</title>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
@@ -263,14 +263,16 @@ let durasiMulutV91 = 0;
 let faseMulutV91 = 0;
 
 /* =====================================================
-   INFORBOT AI V13.2 - MULUT 60% LEBIH KECIL
+   INFORBOT AI V13.3 - MULUT LEBIH HALUS
 ===================================================== */
 let mouthMeshV13 = null;
+let mouthMeshBlendV13 = null;
 let mouthFramesV13 = [];
 let mouthFrameIndexV13 = 0;
 let mouthTimerV13 = 0;
 let mouthNextDelayV13 = 0.12;
 let mouthAssetsLoadedV13 = 0;
+let mouthTransitionV13 = null;
 const mouthAssetNamesV13 = [
   "M1_TERTUTUP.png",
   "M2_SEDIKIT_TERBUKA.png",
@@ -376,22 +378,32 @@ function pasangWajahV91(){
 function buatLapisanMulutV13(){
   if(!headGroup) return;
 
-  /* V13.2: ukuran lapisan mulut diperkecil 60% dari V13.1.
-       Ukuran baru = 40% ukuran sebelumnya. */
+  /*
+   * Ukuran dipertahankan sama seperti V13.2.
+   * Dua mesh memungkinkan pergantian frame dengan crossfade.
+   */
   const geo = new THREE.PlaneGeometry(0.328, 0.188);
-  const mat = new THREE.MeshBasicMaterial({
-    transparent: true,
-    opacity: 1,
-    side: THREE.DoubleSide,
-    depthTest: false,
-    depthWrite: false
-  });
 
-  mouthMeshV13 = new THREE.Mesh(geo, mat);
-  mouthMeshV13.position.set(0, -0.205, 0.815);
-  mouthMeshV13.renderOrder = 80;
-  mouthMeshV13.visible = false;
-  headGroup.add(mouthMeshV13);
+  function buatMeshMulut(renderOrder){
+    const mat = new THREE.MeshBasicMaterial({
+      transparent: true,
+      opacity: 1,
+      side: THREE.DoubleSide,
+      depthTest: false,
+      depthWrite: false
+    });
+
+    const mesh = new THREE.Mesh(geo, mat);
+    mesh.position.set(0, -0.205, 0.815);
+    mesh.renderOrder = renderOrder;
+    mesh.visible = false;
+    headGroup.add(mesh);
+    return mesh;
+  }
+
+  mouthMeshV13 = buatMeshMulut(80);
+  mouthMeshBlendV13 = buatMeshMulut(81);
+  mouthMeshBlendV13.material.opacity = 0;
 
   mouthAssetNamesV13.forEach(function(nama, index){
     loaderFrameMulutV13(nama, index);
@@ -405,25 +417,30 @@ function loaderFrameMulutV13(nama, index){
     "./" + nama,
     function(texture){
       /*
-       * V13.1:
        * Gunakan PNG transparan secara langsung.
-       * Jangan crop ulang menggunakan canvas, karena aset sudah
-       * dipisahkan dan pemotongan ulang bisa menghilangkan bagian bibir.
+       * Tidak ada pemotongan ulang melalui Canvas.
        */
       texture.encoding = THREE.sRGBEncoding;
       texture.minFilter = THREE.LinearFilter;
       texture.magFilter = THREE.LinearFilter;
+      texture.generateMipmaps = false;
       texture.needsUpdate = true;
 
       mouthFramesV13[index] = texture;
       mouthAssetsLoadedV13++;
 
-      if(index === 0 && mouthMeshV13){
-        mouthMeshV13.material.map = texture;
-        mouthMeshV13.material.needsUpdate = true;
+      if(index === 0){
+        if(mouthMeshV13){
+          mouthMeshV13.material.map = texture;
+          mouthMeshV13.material.needsUpdate = true;
+        }
+        if(mouthMeshBlendV13){
+          mouthMeshBlendV13.material.map = texture;
+          mouthMeshBlendV13.material.needsUpdate = true;
+        }
       }
 
-      console.log("👄 V13.1 frame siap:", nama,
+      console.log("👄 V13.3 frame siap:", nama,
                   "(" + mouthAssetsLoadedV13 + "/6)");
     },
     undefined,
@@ -440,17 +457,23 @@ function mulaiMulutBerbicara(){
   mulutSedangBerbicaraV91 = true;
   mouthTimerV13 = 0;
   mouthFrameIndexV13 = 1;
-  mouthNextDelayV13 = 0.10;
+  mouthNextDelayV13 = 0.12;
+  mouthTransitionV13 = null;
   mulutTerbukaV91 = true;
 
-  if(mouthMeshV13){
+  if(mouthFramesV13[mouthFrameIndexV13] && mouthMeshV13){
+    mouthMeshV13.material.map = mouthFramesV13[mouthFrameIndexV13];
+    mouthMeshV13.material.opacity = 1;
+    mouthMeshV13.material.needsUpdate = true;
     mouthMeshV13.visible = true;
-    if(mouthFramesV13[mouthFrameIndexV13]){
-      mouthMeshV13.material.map = mouthFramesV13[mouthFrameIndexV13];
-      mouthMeshV13.material.needsUpdate = true;
-    }
   }
-  console.log("🔊 V13 MULUT MULAI BERBICARA");
+
+  if(mouthMeshBlendV13){
+    mouthMeshBlendV13.material.opacity = 0;
+    mouthMeshBlendV13.visible = false;
+  }
+
+  console.log("🔊 V13.3 MULUT MULAI BERBICARA");
 }
 
 /* =====================================================
@@ -461,46 +484,95 @@ function berhentiMulutBerbicara(){
   mulutTerbukaV91 = false;
   waktuMulutV91 = 0;
   mouthTimerV13 = 0;
+  mouthTransitionV13 = null;
 
-  if(mouthMeshV13) mouthMeshV13.visible = false;
+  if(mouthMeshV13){
+    mouthMeshV13.visible = false;
+    mouthMeshV13.material.opacity = 1;
+  }
+  if(mouthMeshBlendV13){
+    mouthMeshBlendV13.visible = false;
+    mouthMeshBlendV13.material.opacity = 0;
+  }
+
   if(headFoto && teksturWajahNormalV91){
     headFoto.material.map = teksturWajahNormalV91;
     headFoto.material.needsUpdate = true;
   }
-  console.log("🔇 V13 MULUT KEMBALI TERTUTUP");
+
+  console.log("🔇 V13.3 MULUT KEMBALI TERTUTUP");
 }
 
 /* =====================================================
    V13 - ANIMASI OTOMATIS 6 FRAME
 ===================================================== */
 function animasiMulut(){
-  if(!mulutSedangBerbicaraV91 || !mouthMeshV13) return;
+  if(!mulutSedangBerbicaraV91 || !mouthMeshV13 || !mouthMeshBlendV13) return;
   if(mouthAssetsLoadedV13 < 6) return;
+
+  /*
+   * Saat pergantian sedang berlangsung, silang-pudarkan dua frame.
+   * Durasi singkat agar perubahan bentuk lebih lembut tetapi tetap responsif.
+   */
+  if(mouthTransitionV13){
+    mouthTransitionV13.elapsed += 0.016;
+    const t = Math.min(1, mouthTransitionV13.elapsed / mouthTransitionV13.duration);
+
+    mouthTransitionV13.from.material.opacity = 1 - t;
+    mouthTransitionV13.to.material.opacity = t;
+
+    if(t >= 1){
+      mouthTransitionV13.from.visible = false;
+      mouthTransitionV13.from.material.opacity = 1;
+      mouthTransitionV13.to.material.opacity = 1;
+
+      const oldActive = mouthMeshV13;
+      mouthMeshV13 = mouthMeshBlendV13;
+      mouthMeshBlendV13 = oldActive;
+
+      mouthMeshV13.visible = true;
+      mouthMeshV13.material.opacity = 1;
+      mouthMeshBlendV13.visible = false;
+      mouthMeshBlendV13.material.opacity = 0;
+
+      mouthTransitionV13 = null;
+    }
+    return;
+  }
 
   mouthMeshV13.visible = true;
   mouthTimerV13 += 0.016;
   if(mouthTimerV13 < mouthNextDelayV13) return;
   mouthTimerV13 = 0;
 
-  /* Pilih variasi: lebih sering bukaan kecil/sedang, sesekali lebar. */
+  /* Pilih variasi mulut; bukaan lebar lebih jarang. */
   const r = Math.random();
   let pilihan;
-  if(r < 0.32) pilihan = 1;          // sedikit terbuka
-  else if(r < 0.62) pilihan = 4;     // transisi berbicara
-  else if(r < 0.84) pilihan = 2;     // terbuka
-  else pilihan = 3;                  // terbuka lebar, lebih jarang
+  if(r < 0.36) pilihan = 1;       // sedikit terbuka
+  else if(r < 0.67) pilihan = 4;  // transisi berbicara
+  else if(r < 0.88) pilihan = 2;  // terbuka
+  else pilihan = 3;               // terbuka lebar
 
-  /* Hindari dua frame yang sama berturut-turut. */
   if(pilihan === mouthFrameIndexV13){
     pilihan = (pilihan === 1) ? 4 : 1;
   }
-  mouthFrameIndexV13 = pilihan;
 
-  if(mouthFramesV13[mouthFrameIndexV13]){
-    mouthMeshV13.material.map = mouthFramesV13[mouthFrameIndexV13];
-    mouthMeshV13.material.needsUpdate = true;
-  }
-  mouthNextDelayV13 = 0.09 + Math.random() * 0.10;
+  if(!mouthFramesV13[pilihan]) return;
+
+  mouthFrameIndexV13 = pilihan;
+  mouthMeshBlendV13.material.map = mouthFramesV13[pilihan];
+  mouthMeshBlendV13.material.needsUpdate = true;
+  mouthMeshBlendV13.material.opacity = 0;
+  mouthMeshBlendV13.visible = true;
+
+  mouthTransitionV13 = {
+    from: mouthMeshV13,
+    to: mouthMeshBlendV13,
+    elapsed: 0,
+    duration: 0.075
+  };
+
+  mouthNextDelayV13 = 0.13 + Math.random() * 0.09;
 }
 
 /* =====================================================
