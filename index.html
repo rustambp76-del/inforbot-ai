@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>INFORBOT AI V4.0 - Rustam, S.E.</title>
+<title>INFORBOT AI V13.0 - Rustam, S.E.</title>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
@@ -230,7 +230,7 @@ const helloBtn = document.getElementById("helloBtn");
 
 /* =====================================================
    INFORBOT V9.1
-   SISTEM MULUT TANPA GHOSTING
+   SISTEM MULUT V13 - FRAME OTOMATIS
 ===================================================== */
 /* =====================================================
    THREE.JS
@@ -261,6 +261,24 @@ let waktuMulutV91 = 0;
 let durasiMulutV91 = 0;
 
 let faseMulutV91 = 0;
+
+/* =====================================================
+   INFORBOT AI V13 - ANIMASI MULUT DENGAN 6 FRAME
+===================================================== */
+let mouthMeshV13 = null;
+let mouthFramesV13 = [];
+let mouthFrameIndexV13 = 0;
+let mouthTimerV13 = 0;
+let mouthNextDelayV13 = 0.12;
+let mouthAssetsLoadedV13 = 0;
+const mouthAssetNamesV13 = [
+  "M1_TERTUTUP.png",
+  "M2_SEDIKIT_TERBUKA.png",
+  "M3_BERBICARA_1.png",
+  "M4_BERBICARA_2.png",
+  "M5_BERBICARA_3.png",
+  "M6_KEMBALI_TERTUTUP.png"
+];
 /* =====================================================
    INFORBOT AI V12
    KEDIP MATA DENGAN GAMBAR
@@ -318,240 +336,187 @@ function initThree(){
    LOAD WAJAH
 ===================================================== */
 function pasangWajahV91(){
-  const loader =
-    new THREE.TextureLoader();
-  /* =================================================
-     WAJAH NORMAL
-  ================================================= */
-  loader.load(
+  const loader = new THREE.TextureLoader();
 
+  loader.load(
     "./INFORBOT_HEAD.png",
     function(texture){
-      teksturWajahNormalV91 =
-        texture;
-      teksturWajahNormalV91.encoding =
-        THREE.sRGBEncoding;
-      const geo =
-        new THREE.PlaneGeometry(
-          2.35,
-          1.78
-        );
-      const mat =
-        new THREE.MeshBasicMaterial({
-          map:
-            teksturWajahNormalV91,
-          transparent:true,
-          opacity:1,
-          side:
-            THREE.DoubleSide,
-          depthTest:false,
-          depthWrite:false
-        });
-      headFoto =
-        new THREE.Mesh(
-          geo,
-          mat
-        );
-      headFoto.position.set(
-        0,
-        0.05,
-        0.78
-      );
-      headFoto.renderOrder =
-        10;
-      headGroup.add(
-        headFoto
-      );
-      console.log(
-        "✅ V9.1 WAJAH NORMAL SIAP"
-      );
-       /* =============================================
-         LOAD MULUT TERBUKA
-      ============================================= */
-      loader.load(
-        "./INFORBOT_HEAD_TERBUKA.png",
-        function(texture){
-          teksturMulutTerbukaV91 =
-            texture;
-          teksturMulutTerbukaV91.encoding =
-            THREE.sRGBEncoding;
-          console.log(
-            "👄 V9.1 TEKSTUR MULUT TERBUKA SIAP"
-          );
-        },
-        undefined,
-        function(error){
-          console.error(
-            "❌ GAGAL MEMUAT INFORBOT_HEAD_TERBUKA.png",
-            error
-          );
-        }
-      );
+      teksturWajahNormalV91 = texture;
+      teksturWajahNormalV91.encoding = THREE.sRGBEncoding;
+
+      const geo = new THREE.PlaneGeometry(2.35, 1.78);
+      const mat = new THREE.MeshBasicMaterial({
+        map: teksturWajahNormalV91,
+        transparent: true,
+        opacity: 1,
+        side: THREE.DoubleSide,
+        depthTest: false,
+        depthWrite: false
+      });
+
+      headFoto = new THREE.Mesh(geo, mat);
+      headFoto.position.set(0, 0.05, 0.78);
+      headFoto.renderOrder = 10;
+      headGroup.add(headFoto);
+
+      console.log("✅ V13 WAJAH NORMAL SIAP");
+      buatLapisanMulutV13();
     },
     undefined,
     function(error){
-      console.error(
-        "❌ GAGAL MEMUAT INFORBOT_HEAD.png",
-        error
-      );
+      console.error("❌ GAGAL MEMUAT INFORBOT_HEAD.png", error);
     }
   );
-}    
+}
 
 /* =====================================================
-   MULUT MULAI BERBICARA V9.1
+   V13 - SIAPKAN LAPISAN MULUT DAN 6 FRAME
+   Mengambil area mulut dari aset yang sudah ada di GitHub.
+===================================================== */
+function buatLapisanMulutV13(){
+  if(!headGroup) return;
+
+  const geo = new THREE.PlaneGeometry(0.78, 0.32);
+  const mat = new THREE.MeshBasicMaterial({
+    transparent: true,
+    opacity: 1,
+    side: THREE.DoubleSide,
+    depthTest: false,
+    depthWrite: false
+  });
+
+  mouthMeshV13 = new THREE.Mesh(geo, mat);
+  mouthMeshV13.position.set(0, -0.205, 0.815);
+  mouthMeshV13.renderOrder = 80;
+  mouthMeshV13.visible = false;
+  headGroup.add(mouthMeshV13);
+
+  mouthAssetNamesV13.forEach(function(nama, index){
+    loaderFrameMulutV13(nama, index);
+  });
+}
+
+function loaderFrameMulutV13(nama, index){
+  const loader = new THREE.TextureLoader();
+  loader.load(
+    "./" + nama,
+    function(texture){
+      const img = texture.image;
+      const canvas = document.createElement("canvas");
+      canvas.width = 320;
+      canvas.height = 130;
+      const ctx = canvas.getContext("2d");
+
+      /* Crop bagian mulut saja; area hidung dan dagu diminimalkan. */
+      const sx = Math.max(0, Math.round(img.width * 0.225));
+      const sy = Math.max(0, Math.round(img.height * 0.32));
+      const sw = Math.min(Math.round(img.width * 0.55), img.width - sx);
+      const sh = Math.min(Math.round(img.height * 0.42), img.height - sy);
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(img, sx, sy, sw, sh, 0, 0, canvas.width, canvas.height);
+
+      /* Feather tepi supaya lapisan tidak tampak seperti kotak tempelan. */
+      ctx.globalCompositeOperation = "destination-in";
+      const grad = ctx.createRadialGradient(160, 65, 25, 160, 65, 180);
+      grad.addColorStop(0, "rgba(255,255,255,1)");
+      grad.addColorStop(0.72, "rgba(255,255,255,0.98)");
+      grad.addColorStop(1, "rgba(255,255,255,0)");
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.globalCompositeOperation = "source-over";
+
+      const frameTexture = new THREE.CanvasTexture(canvas);
+      frameTexture.encoding = THREE.sRGBEncoding;
+      frameTexture.needsUpdate = true;
+      mouthFramesV13[index] = frameTexture;
+      mouthAssetsLoadedV13++;
+
+      if(index === 0 && mouthMeshV13){
+        mouthMeshV13.material.map = frameTexture;
+        mouthMeshV13.material.needsUpdate = true;
+      }
+      console.log("👄 V13 frame siap:", nama);
+    },
+    undefined,
+    function(error){
+      console.error("❌ Gagal memuat aset mulut " + nama, error);
+    }
+  );
+}
+
+/* =====================================================
+   MULUT MULAI BERBICARA V13
 ===================================================== */
 function mulaiMulutBerbicara(){
-  mulutSedangBerbicaraV91 =
-    true;
-  waktuMulutV91 =
-    0;
-  durasiMulutV91 =
-    0.08;
-  faseMulutV91 =
-    Math.random();
-  console.log(
-    "🔊 V9.1 MULUT MULAI BERBICARA"
-  );
+  mulutSedangBerbicaraV91 = true;
+  mouthTimerV13 = 0;
+  mouthFrameIndexV13 = 1;
+  mouthNextDelayV13 = 0.10;
+  mulutTerbukaV91 = true;
+
+  if(mouthMeshV13){
+    mouthMeshV13.visible = true;
+    if(mouthFramesV13[mouthFrameIndexV13]){
+      mouthMeshV13.material.map = mouthFramesV13[mouthFrameIndexV13];
+      mouthMeshV13.material.needsUpdate = true;
+    }
+  }
+  console.log("🔊 V13 MULUT MULAI BERBICARA");
 }
 
 /* =====================================================
-   MULUT BERHENTI BERBICARA V9.1
+   MULUT BERHENTI BERBICARA V13
 ===================================================== */
 function berhentiMulutBerbicara(){
-  mulutSedangBerbicaraV91 =
-    false;
-  mulutTerbukaV91 =
-    false;
-  waktuMulutV91 =
-    0;
-  if(
-    headFoto &&
-    teksturWajahNormalV91
-  ){
-    headFoto.material.map =
-      teksturWajahNormalV91;
-    headFoto.material.needsUpdate =
-      true;
+  mulutSedangBerbicaraV91 = false;
+  mulutTerbukaV91 = false;
+  waktuMulutV91 = 0;
+  mouthTimerV13 = 0;
+
+  if(mouthMeshV13) mouthMeshV13.visible = false;
+  if(headFoto && teksturWajahNormalV91){
+    headFoto.material.map = teksturWajahNormalV91;
+    headFoto.material.needsUpdate = true;
   }
-  console.log(
-    "🔇 V9.2 MULUT BERHENTI"
-  );
+  console.log("🔇 V13 MULUT KEMBALI TERTUTUP");
 }
+
 /* =====================================================
-   INFORBOT V9.2
-   ANIMASI MULUT LEBIH NATURAL
+   V13 - ANIMASI OTOMATIS 6 FRAME
 ===================================================== */
 function animasiMulut(){
-  if(
-    !headFoto ||
-    !teksturWajahNormalV91 ||
-    !teksturMulutTerbukaV91
-  ){
-    return;
+  if(!mulutSedangBerbicaraV91 || !mouthMeshV13) return;
+  if(mouthAssetsLoadedV13 < 2) return;
+
+  mouthMeshV13.visible = true;
+  mouthTimerV13 += 0.016;
+  if(mouthTimerV13 < mouthNextDelayV13) return;
+  mouthTimerV13 = 0;
+
+  /* Pilih variasi: lebih sering bukaan kecil/sedang, sesekali lebar. */
+  const r = Math.random();
+  let pilihan;
+  if(r < 0.32) pilihan = 1;          // sedikit terbuka
+  else if(r < 0.62) pilihan = 4;     // transisi berbicara
+  else if(r < 0.84) pilihan = 2;     // terbuka
+  else pilihan = 3;                  // terbuka lebar, lebih jarang
+
+  /* Hindari dua frame yang sama berturut-turut. */
+  if(pilihan === mouthFrameIndexV13){
+    pilihan = (pilihan === 1) ? 4 : 1;
   }
+  mouthFrameIndexV13 = pilihan;
 
-  /* =================================================
-     TIDAK BERBICARA
-  ================================================= */
-  if(!mulutSedangBerbicaraV91){
-    if(
-      headFoto.material.map !==
-      teksturWajahNormalV91
-    ){
-      headFoto.material.map =
-        teksturWajahNormalV91;
-      headFoto.material.needsUpdate =
-        true;
-    }
-    mulutTerbukaV91 = false;
-    waktuMulutV91 = 0;
-    return;
+  if(mouthFramesV13[mouthFrameIndexV13]){
+    mouthMeshV13.material.map = mouthFramesV13[mouthFrameIndexV13];
+    mouthMeshV13.material.needsUpdate = true;
   }
-
-  /* =================================================
-     HITUNG WAKTU
-  ================================================= */
-  waktuMulutV91 += 0.016;
-
-  /* =================================================
-     GANTI GERAKAN
-  ================================================= */
-  if(
-    waktuMulutV91 >=
-    durasiMulutV91
-  ){
-    waktuMulutV91 = 0;
-
-    /* =============================================
-       MULUT SEDANG TERTUTUP
-       → BUKA
-    ============================================= */
-    if(!mulutTerbukaV91){
-      mulutTerbukaV91 = true;
-      headFoto.material.map =
-        teksturMulutTerbukaV91;
-      headFoto.material.needsUpdate =
-        true;
-      /*
-         Mulut terbuka lebih lama.
-         Variasi supaya tidak monoton.
-      */
-      const r =
-        Math.random();
-      if(r < 0.30){
-        durasiMulutV91 =
-          0.18;
-      }
-      else if(r < 0.75){
-        durasiMulutV91 =
-          0.24;
-      }
-      else{
-        durasiMulutV91 =
-          0.30;
-      }
-      console.log(
-        "👄 V9.2 BUKA"
-      );
-    }
-
-    /* =============================================
-       MULUT TERBUKA
-       → TUTUP
-    ============================================= */
-    else{
-      mulutTerbukaV91 = false;
-      headFoto.material.map =
-        teksturWajahNormalV91;
-      headFoto.material.needsUpdate =
-        true;
-
-      /*
-         Jeda tertutup dibuat sedikit
-         lebih pendek daripada bukaan.
-      */
-
-      const r =
-        Math.random();
-      if(r < 0.25){
-        durasiMulutV91 =
-          0.10;
-      }
-      else if(r < 0.75){
-        durasiMulutV91 =
-          0.14;
-      }
-      else{
-        durasiMulutV91 =
-          0.20;
-      }
-      console.log(
-        "👄 V9.2 TUTUP"
-      );
-    }
-  }
+  mouthNextDelayV13 = 0.09 + Math.random() * 0.10;
 }
+
+/* =====================================================
+   LEGACY V9 FUNCTIONS DISABLED - V13 HANDLES THE MOUTH
+===================================================== */
 function buatMataKedipSementara(){
   if(!headGroup)return;
   const geo=new THREE.PlaneGeometry(.34,.045);
@@ -569,6 +534,9 @@ function hapusMataKedipSementara(){
   if(mataKedipKiri){headGroup.remove(mataKedipKiri);mataKedipKiri=null;}
   if(mataKedipKanan){headGroup.remove(mataKedipKanan);mataKedipKanan=null;}
 }
+
+/* Fungsi mulut lama V9.x dihapus; animasi mulut ditangani oleh V13. */
+
 /* =====================================================
    INFORBOT AI V11.1
    KELOPAK MATA TEPAT DI ATAS MATA ASLI
@@ -713,7 +681,7 @@ function buatMataPejamV12(){
 
   loader.load(
 
-    "./INFORBOT_EYES_CLOSED.png",
+    "./INFORBOT_HEAD_PEJAM.png",
 
     function(texture){
 
@@ -794,7 +762,7 @@ function buatMataPejamV12(){
     function(error){
 
       console.error(
-        "❌ V12 GAGAL MEMUAT INFORBOT_EYES_CLOSED.png",
+        "❌ V12 GAGAL MEMUAT INFORBOT_HEAD_PEJAM.png",
         error
       );
 
