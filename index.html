@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>INFORBOT AI V13.0 - Rustam, S.E.</title>
+<title>INFORBOT AI V13.2 - Rustam, S.E.</title>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
@@ -263,7 +263,7 @@ let durasiMulutV91 = 0;
 let faseMulutV91 = 0;
 
 /* =====================================================
-   INFORBOT AI V13 - ANIMASI MULUT DENGAN 6 FRAME
+   INFORBOT AI V13.2 - MULUT 60% LEBIH KECIL
 ===================================================== */
 let mouthMeshV13 = null;
 let mouthFramesV13 = [];
@@ -376,7 +376,9 @@ function pasangWajahV91(){
 function buatLapisanMulutV13(){
   if(!headGroup) return;
 
-  const geo = new THREE.PlaneGeometry(0.82, 0.47);
+  /* V13.2: ukuran lapisan mulut diperkecil 60% dari V13.1.
+       Ukuran baru = 40% ukuran sebelumnya. */
+  const geo = new THREE.PlaneGeometry(0.328, 0.188);
   const mat = new THREE.MeshBasicMaterial({
     transparent: true,
     opacity: 1,
