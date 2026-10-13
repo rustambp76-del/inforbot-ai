@@ -231,6 +231,38 @@ const jawabanEl = document.getElementById("jawaban");
 const micBtn = document.getElementById("micBtn");
 const helloBtn = document.getElementById("helloBtn");
 
+/* =========================================
+   INFORBOT AI V15.1
+   MEMORI PERCAKAPAN
+   HAK CIPTA RUSTAM, S.E.
+========================================= */
+const memoriPercakapan = [];
+const BATAS_MEMORI = 6;
+
+function simpanMemori(pertanyaan, jawaban) {
+  memoriPercakapan.push({
+    pertanyaan: pertanyaan,
+    jawaban: jawaban
+  });
+
+  while (memoriPercakapan.length > BATAS_MEMORI) {
+    memoriPercakapan.shift();
+  }
+}
+
+function ambilMemori() {
+  if (memoriPercakapan.length === 0) {
+    return "";
+  }
+
+  return memoriPercakapan.map(function(item, index) {
+    return (
+      "Percakapan " + (index + 1) + ":\n" +
+      "Pengguna: " + item.pertanyaan + "\n" +
+      "INFORBOT: " + item.jawaban
+    );
+  }).join("\n\n");
+}  
 /* =====================================================
    INFORBOT V9.1
    SISTEM MULUT V13 - FRAME OTOMATIS
@@ -1081,58 +1113,79 @@ helloBtn.addEventListener(
 );
 
 /* =====================================================
-   KIRIM PERTANYAAN KE APPS SCRIPT
+   INFORBOT AI V15.1
+   KIRIM PERTANYAAN + MEMORI PERCAKAPAN
    MENGGUNAKAN JSONP
+   HAK CIPTA RUSTAM, S.E.
 ===================================================== */
-function kirimPertanyaan(teks, selesai){
-  const script =
-    document.createElement("script");
+
+function kirimPertanyaan(teks, selesai) {
+  const script = document.createElement("script");
+
   const callbackName =
     "inforbotCallback_" +
     Date.now() +
     "_" +
-    Math.floor(Math.random()*10000);
+    Math.floor(Math.random() * 10000);
+
   let sudahSelesai = false;
-  
-  function bersihkan(){
-    if(sudahSelesai) return;
+
+  // Ambil riwayat sebelum pertanyaan baru disimpan.
+  const riwayatSebelumnya = ambilMemori();
+
+  function bersihkan() {
+    if (sudahSelesai) return;
+
     sudahSelesai = true;
-    if(window[callbackName]){
+
+    if (window[callbackName]) {
       delete window[callbackName];
     }
-    if(script.parentNode){
+
+    if (script.parentNode) {
       script.parentNode.removeChild(script);
     }
   }
-  window[callbackName] =
-    function(data){
-      let jawaban =
-        "Maaf, INFORBOT belum mendapatkan jawaban dari server.";
-      if(
-        data &&
-        data.success &&
-        data.jawaban
-      ){
-        jawaban =
-          String(data.jawaban);
-      }
-      selesai(jawaban);
-      bersihkan();
-    };
-  script.onerror =
-    function(){
-      selesai(
-        "Koneksi ke otak INFORBOT belum berhasil. Periksa deployment Apps Script V3.0."
-      );
-      bersihkan();
-    };
+
+  window[callbackName] = function(data) {
+    let jawaban =
+      "Maaf, INFORBOT belum mendapatkan jawaban dari server.";
+
+    if (data && data.success && data.jawaban) {
+      jawaban = String(data.jawaban);
+    }
+
+    // Simpan pertanyaan dan jawaban untuk percakapan berikutnya.
+    if (
+      !jawaban.startsWith("Maaf, INFORBOT") &&
+      !jawaban.startsWith("Koneksi ke otak INFORBOT")
+    ) {
+      simpanMemori(teks, jawaban);
+    }
+
+    selesai(jawaban);
+    bersihkan();
+  };
+
+  script.onerror = function() {
+    selesai(
+      "Koneksi ke otak INFORBOT belum berhasil. Periksa deployment Apps Script."
+    );
+
+    bersihkan();
+  };
+
+  // Kirim pertanyaan beserta konteks percakapan sebelumnya.
   const url =
     APPS_SCRIPT_URL +
     "?action=ask" +
     "&q=" +
     encodeURIComponent(teks) +
+    "&history=" +
+    encodeURIComponent(riwayatSebelumnya) +
     "&callback=" +
     callbackName;
+
   script.src = url;
   document.body.appendChild(script);
 }
