@@ -1,0 +1,35 @@
+INFORBOT AI — FAVICON & IKON INSTALASI
+HAK CIPTA RUSTAM, S.E.
+
+File dalam paket:
+- favicon.ico dan favicon-48.png: ikon tab browser
+- apple-touch-icon.png: ikon Add to Home Screen perangkat Apple
+- icon-192.png dan icon-512.png: ikon aplikasi PWA
+- manifest.json: metadata instalasi aplikasi
+- TAMBAHKAN_KE_HEAD.html.txt: potongan kode untuk index.html
+
+CARA MEMASANG TANPA MENGUBAH KODE ROBOT:
+1. Ekstrak ZIP ini.
+2. Unggah favicon.ico, favicon-48.png, apple-touch-icon.png, icon-192.png,
+   icon-512.png, dan manifest.json ke ROOT repository rustambp76-del/inforbot-ai,
+   sejajar dengan index.html.
+3. Edit index.html di GitHub dan cari tag <head> yang sudah ada.
+4. Tambahkan isi TAMBAHKAN_KE_HEAD.html.txt di dalam <head>, misalnya setelah
+   tag <title> atau metadata yang sudah ada.
+5. Jangan mengganti seluruh <head> atau index.html. Jangan menghapus kode lama.
+   Kode robot, animasi, suara, dan backend tidak perlu diubah.
+6. Commit perubahan dan tunggu GitHub Pages selesai deploy.
+
+URL situs: https://rustambp76-del.github.io/inforbot-ai/
+
+Jika ikon tab belum berubah, coba Ctrl+F5 atau buka situs di tab privat karena
+browser dapat menyimpan favicon di cache.
+
+Instalasi:
+- Chrome/Edge desktop: menu browser > Install app jika tersedia.
+- Android: menu browser > Install app atau Add to Home screen.
+- iPhone/iPad: Safari > Share > Add to Home Screen.
+Dukungan instalasi bergantung pada browser dan perangkat.
+
+Paket ini menambahkan manifest dan ikon, tetapi tidak menambahkan service worker
+atau mode offline. Itu sengaja agar perilaku robot yang sudah bagus tidak berubah.

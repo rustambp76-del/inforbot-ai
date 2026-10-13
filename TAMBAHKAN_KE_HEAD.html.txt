@@ -1,0 +1,6 @@
+<!-- INFORBOT AI: favicon + ikon instalasi. Tambahkan ke dalam <head> yang SUDAH ADA. -->
+<link rel="icon" href="./favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="48x48" href="./favicon-48.png">
+<link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png">
+<link rel="manifest" href="./manifest.json">
+<meta name="theme-color" content="#061735">
